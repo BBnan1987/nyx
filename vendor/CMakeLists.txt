@@ -1,0 +1,5 @@
+add_subdirectory(imgui)
+set(LIBUV_BUILD_SHARED OFF CACHE BOOL "")
+add_subdirectory(libuv)
+add_subdirectory(simdutf)
+add_subdirectory(v8)

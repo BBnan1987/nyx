@@ -1,0 +1,3 @@
+add_library(lazy_importer INTERFACE)
+
+target_include_directories(lazy_importer INTERFACE include)
