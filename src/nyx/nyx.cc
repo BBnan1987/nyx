@@ -8,10 +8,10 @@
 #include <libplatform/libplatform.h>
 
 #include "nyx/builtins.h"
+#include "nyx/gui/widget_manager.h"
 #include "nyx/imgui_draw_context.h"
 #include "nyx/nyx_imgui.h"
 #include "nyx/util.h"
-#include "nyx/widget.h"
 
 namespace nyx {
 

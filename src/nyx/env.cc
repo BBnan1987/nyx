@@ -1,8 +1,8 @@
 #include "nyx/env.h"
 
+#include "nyx/gui/widget_manager.h"
 #include "nyx/module_wrap.h"
 #include "nyx/nyx_imgui.h"
-#include "nyx/widget.h"
 
 namespace nyx {
 

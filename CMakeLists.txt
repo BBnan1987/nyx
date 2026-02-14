@@ -5,6 +5,28 @@ add_subdirectory(vendor)
 add_subdirectory(dolos)
 
 set(NYX_SOURCES
+  src/nyx/gui/colors.cc
+  src/nyx/gui/combo.cc
+  src/nyx/gui/common.cc
+  src/nyx/gui/image.cc
+  src/nyx/gui/input.cc
+  src/nyx/gui/layout.cc
+  src/nyx/gui/listbox.cc
+  src/nyx/gui/menus.cc
+  src/nyx/gui/panel.cc
+  src/nyx/gui/plotting.cc
+  src/nyx/gui/popups.cc
+  src/nyx/gui/selectable.cc
+  src/nyx/gui/slider.cc
+  src/nyx/gui/tables.cc
+  src/nyx/gui/tabs.cc
+  src/nyx/gui/text.cc
+  src/nyx/gui/tooltip.cc
+  src/nyx/gui/trees.cc
+  src/nyx/gui/widget.cc
+  src/nyx/gui/widget_binding.cc
+  src/nyx/gui/widget_manager.cc
+
   src/nyx/base_object.cc
   src/nyx/builtins.cc
   src/nyx/console_binding.cc
@@ -12,8 +34,6 @@ set(NYX_SOURCES
   src/nyx/errors.cc
   src/nyx/extension.cc
   src/nyx/game_lock.cc
-  src/nyx/widget.cc
-  src/nyx/widget_binding.cc
   src/nyx/imgui_draw_context.cc
   src/nyx/imgui_input_event.cc
   src/nyx/imgui_draw_data_store.cc
