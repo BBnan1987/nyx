@@ -565,7 +565,9 @@ declare module 'gui' {
     buttonRepeat: boolean;
     itemWidth: number;
     textWrap: number;
-  }
+  };
+
+  export const fontSize: number;
 }
 
 declare module 'nyx:gui' {

@@ -2433,6 +2433,10 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
   }
 
   CreatePerIsolatePropertiesIO(isolate_data, target);
+
+  SetProperty(isolate, target, "fontSize", [](const FunctionCallbackInfo<Value>& args) {
+    args.GetReturnValue().Set(ImGui::GetFontSize());
+  });
 }
 
 static void CreatePerContextProperties(Local<Object> target, Local<Context> context) {}
