@@ -40,6 +40,9 @@ using v8::ObjectTemplate;
 using v8::String;
 using v8::Value;
 
+// forward declerations
+void CreatePerIsolatePropertiesIO(IsolateData* isolate_data, Local<ObjectTemplate> target);
+
 static void WidgetAdd(const FunctionCallbackInfo<Value>& args) {
   Widget* self;
   ASSIGN_OR_RETURN_UNWRAP(&self, args.This());
@@ -2220,6 +2223,8 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
     InstallWidgetMethods(isolate, tmpl->PrototypeTemplate());
     target->Set(OneByteString(isolate, "Dummy"), tmpl);
   }
+
+  CreatePerIsolatePropertiesIO(isolate_data, target);
 }
 
 static void CreatePerContextProperties(Local<Object> target, Local<Context> context) {}

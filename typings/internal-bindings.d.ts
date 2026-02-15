@@ -136,6 +136,40 @@ declare function internalBinding(module: 'gui'): {
   Indent: any;
   Unindent: any;
   Dummy: any;
+
+  io: {
+    displaySize: { x: number; y: number };
+    displayFramebufferScale: { x: number; y: number };
+    deltaTime: number;
+    mousePos: { x: number; y: number };
+    mouseDown: boolean[];
+    mouseWheel: number;
+    mouseWheelH: number;
+    keyCtrl: boolean;
+    keyShift: boolean;
+    keyAlt: boolean;
+    keySuper: boolean;
+    wantCaptureMouse: boolean;
+    wantCaptureKeyboard: boolean;
+    wantTextInput: boolean;
+    wantSetMousePos: boolean;
+    wantSaveIniSettings: boolean;
+    navActive: boolean;
+    navVisible: boolean;
+    framerate: number;
+    metricsRenderVertices: number;
+    metricsRenderIndices: number;
+    metricsRenderWindows: number;
+    metricsActiveWindows: number;
+    fontGlobalScale: number;
+    fontAllowUserScaling: boolean;
+    mouseDoubleClickTime: number;
+    mouseDoubleClickMaxDist: number;
+    keyRepeatDelay: number;
+    keyRepeatRate: number;
+    configFlags: number;
+    backendFlags: number;
+  };
 };
 
 declare function internalBinding(module: 'module_wrap'): any;

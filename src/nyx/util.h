@@ -306,7 +306,7 @@ static inline void SetProperty(v8::Isolate* isolate,
                                v8::Local<v8::ObjectTemplate> target,
                                const char* name,
                                v8::FunctionCallback getter,
-                               v8::FunctionCallback setter) {
+                               v8::FunctionCallback setter = nullptr) {
   v8::Local<v8::FunctionTemplate> t_getter;
   v8::Local<v8::FunctionTemplate> t_setter;
   if (getter) {

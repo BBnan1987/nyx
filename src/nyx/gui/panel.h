@@ -3,6 +3,8 @@
 #include "nyx/gui/widget.h"
 
 /** Implements:
+ * + ImGui::Begin
+ * + ImGui::End
  * - ImGui::IsWindowAppearing
  * - ImGui::IsWindowCollapsed
  * - ImGui::IsWindowFocused

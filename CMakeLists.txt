@@ -12,6 +12,7 @@ set(NYX_SOURCES
   src/nyx/gui/common.cc
   src/nyx/gui/image.cc
   src/nyx/gui/input.cc
+  src/nyx/gui/io.cc
   src/nyx/gui/layout.cc
   src/nyx/gui/listbox.cc
   src/nyx/gui/menus.cc

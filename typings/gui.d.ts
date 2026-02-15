@@ -107,6 +107,64 @@ declare module 'gui' {
     readonly Down: 3;
   };
 
+  export interface IO {
+    // Main display size
+    readonly displaySize: { x: number; y: number };
+    readonly displayFramebufferScale: { x: number; y: number };
+
+    // Time
+    readonly deltaTime: number;
+
+    // Mouse state
+    readonly mousePos: { x: number; y: number };
+    readonly mouseDown: readonly boolean[];
+    readonly mouseWheel: number;
+    readonly mouseWheelH: number;
+
+    // Keyboard modifiers
+    readonly keyCtrl: boolean;
+    readonly keyShift: boolean;
+    readonly keyAlt: boolean;
+    readonly keySuper: boolean;
+
+    // Input capture flags
+    readonly wantCaptureMouse: boolean;
+    readonly wantCaptureKeyboard: boolean;
+    readonly wantTextInput: boolean;
+    readonly wantSetMousePos: boolean;
+    readonly wantSaveIniSettings: boolean;
+
+    // Navigation flags
+    readonly navActive: boolean;
+    readonly navVisible: boolean;
+
+    // Framerate
+    readonly framerate: number;
+
+    // Performance metrics
+    readonly metricsRenderVertices: number;
+    readonly metricsRenderIndices: number;
+    readonly metricsRenderWindows: number;
+    readonly metricsActiveWindows: number;
+
+    // Font configuration
+    fontGlobalScale: number;
+    fontAllowUserScaling: boolean;
+
+    // Settings
+    mouseDoubleClickTime: number;
+    mouseDoubleClickMaxDist: number;
+    keyRepeatDelay: number;
+    keyRepeatRate: number;
+
+    // Config flags
+    configFlags: number;
+    backendFlags: number;
+  }
+
+  // ImGui IO singleton
+  export const io: IO;
+
   // Base Widget interface
   export interface Widget {
     /**
