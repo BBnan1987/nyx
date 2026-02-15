@@ -38,6 +38,7 @@ LabelTextWidget::LabelTextWidget(Realm* realm,
     : Widget(realm, object), label_(label), text_(text) {}
 
 void LabelTextWidget::Render() {
+  EmitEvent("update");
   ImGui::LabelText(label_.c_str(), "%s", text_.c_str());
 }
 

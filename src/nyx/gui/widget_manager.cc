@@ -13,8 +13,14 @@ void WidgetManager::RemoveRoot(Widget* widget) {
   }
 }
 
-void WidgetManager::RenderAll() {
-  // Snapshot in case event handlers add/remove roots
+void WidgetManager::UpdateAll() const {
+  auto snapshot = roots_;
+  for (Widget* root : snapshot) {
+    root->Update();
+  }
+}
+
+void WidgetManager::RenderAll() const {
   auto snapshot = roots_;
   for (Widget* root : snapshot) {
     if (root->visible()) {

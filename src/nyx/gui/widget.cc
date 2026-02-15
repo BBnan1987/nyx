@@ -71,6 +71,13 @@ void Widget::Off(const std::string& event, Local<Function> callback) {
   }
 }
 
+void Widget::UpdateChildren() {
+  auto snapshot = children_;
+  for (Widget* child : snapshot) {
+    child->Update();
+  }
+}
+
 void Widget::RenderChildren() {
   // Copy in case event handlers mutate the children vector
   auto snapshot = children_;

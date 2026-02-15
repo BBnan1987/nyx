@@ -13,7 +13,8 @@ class WidgetManager {
 
   void AddRoot(Widget* widget);
   void RemoveRoot(Widget* widget);
-  void RenderAll();
+  void UpdateAll() const;
+  void RenderAll() const;
 
  private:
   std::vector<Widget*> roots_;

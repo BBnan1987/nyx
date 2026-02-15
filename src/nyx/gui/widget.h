@@ -89,6 +89,10 @@ class Widget : public BaseObject {
   ~Widget() override;
 
   virtual void Render() = 0;
+  virtual void Update() {
+    EmitEvent("update");
+    UpdateChildren();
+  }
 
   virtual bool IsContainer() const { return false; }
 
@@ -105,6 +109,7 @@ class Widget : public BaseObject {
   void Off(const std::string& event, v8::Local<v8::Function> callback);
 
  protected:
+  void UpdateChildren();
   void RenderChildren();
   void EmitEvent(const std::string& event);
   void EmitEvent(const std::string& event, v8::Local<v8::Value> arg);

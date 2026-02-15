@@ -77,6 +77,7 @@ static void SpinEventLoop(Environment* env) {
     }
 
     if (env->widget_manager()) {
+      env->widget_manager()->UpdateAll();
       env->widget_manager()->RenderAll();
     }
 
