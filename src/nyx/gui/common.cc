@@ -68,6 +68,7 @@ RadioButtonWidget::RadioButtonWidget(Realm* realm, v8::Local<v8::Object> object,
     : Widget(realm, object), label_(label), active_(active) {}
 
 void RadioButtonWidget::Render() {
+  EmitEvent("update");
   clicked_ = ImGui::RadioButton(label_.c_str(), active_);
   if (clicked_) {
     EmitEvent("click");

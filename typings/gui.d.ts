@@ -350,7 +350,7 @@ declare module 'gui' {
     label: string;
   };
 
-  export const RadioButton: new (label?: string, active?: boolean) => Widget & {
+  export const RadioButton: new (label?: string, obj: object, property: string, value: any) => Widget & {
     active: boolean;
     label: string;
   };
