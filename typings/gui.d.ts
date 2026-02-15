@@ -278,6 +278,14 @@ declare module 'gui' {
     label: string;
   };
 
+  export const ColorPicker3: new (label?: string, r?: number, g?: number, b?: number) => Widget & {
+    label: string;
+  };
+
+  export const ColorPicker4: new (label?: string, r?: number, g?: number, b?: number, a?: number, refR?: number, refG?: number, refB?: number, refA?: number) => Widget & {
+    label: string;
+  };
+
   export const Combo: new (label?: string, items?: string[]) => Widget & {
     label: string;
   };

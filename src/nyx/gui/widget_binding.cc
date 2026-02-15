@@ -913,6 +913,102 @@ static void ColorEdit4GetLabel(const FunctionCallbackInfo<Value>& args) {
   }
 }
 
+static void ColorPicker3New(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  Environment* env = Environment::GetCurrent(context);
+  Utf8Value label(isolate, args[0]);
+  float r = args.Length() > 1 ? static_cast<float>(args[1]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float g = args.Length() > 2 ? static_cast<float>(args[2]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float b = args.Length() > 3 ? static_cast<float>(args[3]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  new ColorPicker3Widget(env->principal_realm(), args.This(), *label, r, g, b);
+}
+
+static void ColorPicker3GetR(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker3Widget* self = BaseObject::Unwrap<ColorPicker3Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->r()));
+}
+
+static void ColorPicker3GetG(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker3Widget* self = BaseObject::Unwrap<ColorPicker3Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->g()));
+}
+
+static void ColorPicker3GetB(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker3Widget* self = BaseObject::Unwrap<ColorPicker3Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->b()));
+}
+
+static void ColorPicker3GetLabel(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker3Widget* self = BaseObject::Unwrap<ColorPicker3Widget>(args.This());
+  if (self) {
+    args.GetReturnValue().Set(String::NewFromUtf8(args.GetIsolate(), self->label().c_str()).ToLocalChecked());
+  }
+}
+
+static void ColorPicker4New(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  Environment* env = Environment::GetCurrent(context);
+  Utf8Value label(isolate, args[0]);
+  float r = args.Length() > 1 ? static_cast<float>(args[1]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float g = args.Length() > 2 ? static_cast<float>(args[2]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float b = args.Length() > 3 ? static_cast<float>(args[3]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float a = args.Length() > 4 ? static_cast<float>(args[4]->NumberValue(context).FromMaybe(1.0)) : 1.0f;
+  float ref_r = args.Length() > 1 ? static_cast<float>(args[5]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float ref_g = args.Length() > 2 ? static_cast<float>(args[6]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float ref_b = args.Length() > 3 ? static_cast<float>(args[7]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float ref_a = args.Length() > 4 ? static_cast<float>(args[8]->NumberValue(context).FromMaybe(1.0)) : 1.0f;
+  new ColorPicker4Widget(env->principal_realm(), args.This(), *label, r, g, b, a, ref_r, ref_g, ref_b, ref_a);
+}
+
+static void ColorPicker4GetR(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker4Widget* self = BaseObject::Unwrap<ColorPicker4Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->r()));
+}
+
+static void ColorPicker4GetG(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker4Widget* self = BaseObject::Unwrap<ColorPicker4Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->g()));
+}
+
+static void ColorPicker4GetB(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker4Widget* self = BaseObject::Unwrap<ColorPicker4Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->b()));
+}
+
+static void ColorPicker4GetA(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker4Widget* self = BaseObject::Unwrap<ColorPicker4Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->a()));
+}
+
+static void ColorPicker4GetRefR(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker4Widget* self = BaseObject::Unwrap<ColorPicker4Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->ref_r()));
+}
+
+static void ColorPicker4GetRefG(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker4Widget* self = BaseObject::Unwrap<ColorPicker4Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->ref_g()));
+}
+
+static void ColorPicker4GetRefB(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker4Widget* self = BaseObject::Unwrap<ColorPicker4Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->ref_b()));
+}
+
+static void ColorPicker4GetRefA(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker4Widget* self = BaseObject::Unwrap<ColorPicker4Widget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->ref_a()));
+}
+
+static void ColorPicker4GetLabel(const FunctionCallbackInfo<Value>& args) {
+  ColorPicker4Widget* self = BaseObject::Unwrap<ColorPicker4Widget>(args.This());
+  if (self) {
+    args.GetReturnValue().Set(String::NewFromUtf8(args.GetIsolate(), self->label().c_str()).ToLocalChecked());
+  }
+}
+
 static std::vector<std::string> ArrayToStringVector(Isolate* isolate, Local<Context> context, Local<Value> val) {
   std::vector<std::string> result;
   if (!val->IsArray()) return result;
@@ -1702,6 +1798,37 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
     SetProperty(isolate, proto, "a", ColorEdit4GetA, nullptr);
     SetProperty(isolate, proto, "label", ColorEdit4GetLabel, nullptr);
     target->Set(OneByteString(isolate, "ColorEdit4"), tmpl);
+  }
+
+  {
+    Local<FunctionTemplate> tmpl = FunctionTemplate::New(isolate, ColorPicker3New);
+    tmpl->SetClassName(OneByteString(isolate, "ColorPicker3"));
+    tmpl->InstanceTemplate()->SetInternalFieldCount(BaseObject::kInternalFieldCount);
+    Local<ObjectTemplate> proto = tmpl->PrototypeTemplate();
+    InstallWidgetMethods(isolate, proto);
+    SetProperty(isolate, proto, "r", ColorPicker3GetR, nullptr);
+    SetProperty(isolate, proto, "g", ColorPicker3GetG, nullptr);
+    SetProperty(isolate, proto, "b", ColorPicker3GetB, nullptr);
+    SetProperty(isolate, proto, "label", ColorPicker3GetLabel, nullptr);
+    target->Set(OneByteString(isolate, "ColorPicker3"), tmpl);
+  }
+
+  {
+    Local<FunctionTemplate> tmpl = FunctionTemplate::New(isolate, ColorPicker4New);
+    tmpl->SetClassName(OneByteString(isolate, "ColorPicker4"));
+    tmpl->InstanceTemplate()->SetInternalFieldCount(BaseObject::kInternalFieldCount);
+    Local<ObjectTemplate> proto = tmpl->PrototypeTemplate();
+    InstallWidgetMethods(isolate, proto);
+    SetProperty(isolate, proto, "r", ColorPicker4GetR, nullptr);
+    SetProperty(isolate, proto, "g", ColorPicker4GetG, nullptr);
+    SetProperty(isolate, proto, "b", ColorPicker4GetB, nullptr);
+    SetProperty(isolate, proto, "a", ColorPicker4GetA, nullptr);
+    SetProperty(isolate, proto, "refR", ColorPicker4GetRefR, nullptr);
+    SetProperty(isolate, proto, "refG", ColorPicker4GetRefG, nullptr);
+    SetProperty(isolate, proto, "refB", ColorPicker4GetRefB, nullptr);
+    SetProperty(isolate, proto, "refA", ColorPicker4GetRefA, nullptr);
+    SetProperty(isolate, proto, "label", ColorPicker4GetLabel, nullptr);
+    target->Set(OneByteString(isolate, "ColorPicker4"), tmpl);
   }
 
   {
