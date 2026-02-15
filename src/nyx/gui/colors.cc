@@ -35,12 +35,8 @@ void ColorEdit4Widget::Render() {
   }
 }
 
-ColorPicker3Widget::ColorPicker3Widget(Realm* realm,
-                                       v8::Local<v8::Object> object,
-                                       const std::string& label,
-                                       float r,
-                                       float g,
-                                       float b)
+ColorPicker3Widget::ColorPicker3Widget(
+    Realm* realm, v8::Local<v8::Object> object, const std::string& label, float r, float g, float b)
     : Widget(realm, object), label_(label) {
   col_[0] = r;
   col_[1] = g;
@@ -82,6 +78,34 @@ void ColorPicker4Widget::Render() {
   ImGui::ColorPicker4(label_.c_str(), col_, 0, ref_);
   if (col_[0] != old[0] || col_[1] != old[1] || col_[2] != old[2] || col_[3] != old[3]) {
     EmitEvent("change");
+  }
+}
+
+ColorButtonWidget::ColorButtonWidget(Realm* realm,
+                                     v8::Local<v8::Object> object,
+                                     const std::string& label,
+                                     float r,
+                                     float g,
+                                     float b,
+                                     float a,
+                                     float size_x,
+                                     float size_y)
+    : Widget(realm, object), label_(label) {
+  col_[0] = r;
+  col_[1] = g;
+  col_[2] = b;
+  col_[3] = a;
+  size_[0] = size_x;
+  size_[1] = size_y;
+}
+
+void ColorButtonWidget::Render() {
+  ImVec4 color{col_[0], col_[1], col_[2], col_[3]};
+  ImVec2 size{size_[0], size_[1]};
+  ImGui::ColorButton(label_.c_str(), color, 0, size);
+  clicked_ = ImGui::ColorButton(label_.c_str(), color, 0, size);
+  if (clicked_) {
+    EmitEvent("click");
   }
 }
 

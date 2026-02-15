@@ -1009,6 +1009,62 @@ static void ColorPicker4GetLabel(const FunctionCallbackInfo<Value>& args) {
   }
 }
 
+static void ColorButtonNew(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  Environment* env = Environment::GetCurrent(context);
+  Utf8Value label(isolate, args[0]);
+  float r = args.Length() > 1 ? static_cast<float>(args[1]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float g = args.Length() > 2 ? static_cast<float>(args[2]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float b = args.Length() > 3 ? static_cast<float>(args[3]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float a = args.Length() > 4 ? static_cast<float>(args[4]->NumberValue(context).FromMaybe(1.0)) : 1.0f;
+  float size_x = args.Length() > 1 ? static_cast<float>(args[5]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float size_y = args.Length() > 2 ? static_cast<float>(args[6]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  new ColorButtonWidget(env->principal_realm(), args.This(), *label, r, g, b, a, size_x, size_y);
+}
+
+static void ColorButtonGetR(const FunctionCallbackInfo<Value>& args) {
+  ColorButtonWidget* self = BaseObject::Unwrap<ColorButtonWidget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->r()));
+}
+
+static void ColorButtonGetG(const FunctionCallbackInfo<Value>& args) {
+  ColorButtonWidget* self = BaseObject::Unwrap<ColorButtonWidget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->g()));
+}
+
+static void ColorButtonGetB(const FunctionCallbackInfo<Value>& args) {
+  ColorButtonWidget* self = BaseObject::Unwrap<ColorButtonWidget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->b()));
+}
+
+static void ColorButtonGetA(const FunctionCallbackInfo<Value>& args) {
+  ColorButtonWidget* self = BaseObject::Unwrap<ColorButtonWidget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->a()));
+}
+
+static void ColorButtonGetSizeX(const FunctionCallbackInfo<Value>& args) {
+  ColorButtonWidget* self = BaseObject::Unwrap<ColorButtonWidget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->size_x()));
+}
+
+static void ColorButtonGetSizeY(const FunctionCallbackInfo<Value>& args) {
+  ColorButtonWidget* self = BaseObject::Unwrap<ColorButtonWidget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->size_y()));
+}
+
+static void ColorButtonGetClicked(const FunctionCallbackInfo<Value>& args) {
+  ColorButtonWidget* self = BaseObject::Unwrap<ColorButtonWidget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<double>(self->clicked()));
+}
+
+static void ColorButtonGetLabel(const FunctionCallbackInfo<Value>& args) {
+  ColorButtonWidget* self = BaseObject::Unwrap<ColorButtonWidget>(args.This());
+  if (self) {
+    args.GetReturnValue().Set(String::NewFromUtf8(args.GetIsolate(), self->label().c_str()).ToLocalChecked());
+  }
+}
+
 static std::vector<std::string> ArrayToStringVector(Isolate* isolate, Local<Context> context, Local<Value> val) {
   std::vector<std::string> result;
   if (!val->IsArray()) return result;
@@ -1829,6 +1885,23 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
     SetProperty(isolate, proto, "refA", ColorPicker4GetRefA, nullptr);
     SetProperty(isolate, proto, "label", ColorPicker4GetLabel, nullptr);
     target->Set(OneByteString(isolate, "ColorPicker4"), tmpl);
+  }
+
+  {
+    Local<FunctionTemplate> tmpl = FunctionTemplate::New(isolate, ColorButtonNew);
+    tmpl->SetClassName(OneByteString(isolate, "ColorButton"));
+    tmpl->InstanceTemplate()->SetInternalFieldCount(BaseObject::kInternalFieldCount);
+    Local<ObjectTemplate> proto = tmpl->PrototypeTemplate();
+    InstallWidgetMethods(isolate, proto);
+    SetProperty(isolate, proto, "r", ColorButtonGetR, nullptr);
+    SetProperty(isolate, proto, "g", ColorButtonGetG, nullptr);
+    SetProperty(isolate, proto, "b", ColorButtonGetB, nullptr);
+    SetProperty(isolate, proto, "a", ColorButtonGetA, nullptr);
+    SetProperty(isolate, proto, "sizeX", ColorButtonGetSizeX, nullptr);
+    SetProperty(isolate, proto, "sizeY", ColorButtonGetSizeY, nullptr);
+    SetProperty(isolate, proto, "clicked", ColorButtonGetClicked, nullptr);
+    SetProperty(isolate, proto, "label", ColorButtonGetLabel, nullptr);
+    target->Set(OneByteString(isolate, "ColorButton"), tmpl);
   }
 
   {
