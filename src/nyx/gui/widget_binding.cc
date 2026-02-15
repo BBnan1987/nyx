@@ -1352,6 +1352,11 @@ static void DisabledSetDisabled(const FunctionCallbackInfo<Value>& args) {
   if (self) self->set_disabled(args[0]->BooleanValue(args.GetIsolate()));
 }
 
+static void MainMenuBarNew(const FunctionCallbackInfo<Value>& args) {
+  Environment* env = Environment::GetCurrent(args.GetIsolate());
+  new MainMenuBarWidget(env->principal_realm(), args.This());
+}
+
 static void MenuBarNew(const FunctionCallbackInfo<Value>& args) {
   Environment* env = Environment::GetCurrent(args.GetIsolate());
   new MenuBarWidget(env->principal_realm(), args.This());
@@ -2081,6 +2086,14 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
     InstallWidgetMethods(isolate, proto);
     SetProperty(isolate, proto, "disabled", DisabledGetDisabled, DisabledSetDisabled);
     target->Set(OneByteString(isolate, "Disabled"), tmpl);
+  }
+
+  {
+    Local<FunctionTemplate> tmpl = FunctionTemplate::New(isolate, MainMenuBarNew);
+    tmpl->SetClassName(OneByteString(isolate, "MainMenuBar"));
+    tmpl->InstanceTemplate()->SetInternalFieldCount(BaseObject::kInternalFieldCount);
+    InstallWidgetMethods(isolate, tmpl->PrototypeTemplate());
+    target->Set(OneByteString(isolate, "MainMenuBar"), tmpl);
   }
 
   {

@@ -325,6 +325,7 @@ declare module 'gui' {
   export const Group: new () => Widget;
   export const Disabled: new (disabled?: boolean) => Widget;
 
+  export const MainMenuBar: new () => Widget;
   export const MenuBar: new () => Widget;
   export const Menu: new (label?: string) => Widget & {
     label: string;

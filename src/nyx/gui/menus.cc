@@ -5,6 +5,13 @@ namespace nyx {
 using v8::HandleScope;
 using v8::Isolate;
 
+void MainMenuBarWidget::Render() {
+  if (ImGui::BeginMainMenuBar()) {
+    RenderChildren();
+    ImGui::EndMainMenuBar();
+  }
+}
+
 void MenuBarWidget::Render() {
   if (ImGui::BeginMenuBar()) {
     RenderChildren();

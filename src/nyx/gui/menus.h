@@ -5,14 +5,21 @@
 /** Implements:
  * + ImGui::BeginMenuBar
  * + ImGui::EndMenuBar
- * - ImGui::BeginMainMenuBar
- * - ImGui::EndMainMenuBar
+ * + ImGui::BeginMainMenuBar
+ * + ImGui::EndMainMenuBar
  * + ImGui::BeginMenu
  * + ImGui::EndMenu
  * + ImGui::MenuItem
  */
 
 namespace nyx {
+
+class MainMenuBarWidget : public Widget {
+ public:
+  using Widget::Widget;
+  void Render() override;
+  bool IsContainer() const override { return true; }
+};
 
 class MenuBarWidget : public Widget {
  public:
