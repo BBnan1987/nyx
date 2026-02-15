@@ -10,7 +10,15 @@ declare module 'gui' {
 
     readonly IsSRGB: number;
     readonly IsTouchScreen: number;
-  }
+  };
+
+  export const BackendFlags: {
+    readonly None: number;
+    readonly HasGamepad: number;   // Backend Platform supports gamepad and currently has one connected.
+    readonly HasMouseCursors: number;   // Backend Platform supports honoring GetMouseCursor() value to change the OS cursor shape.
+    readonly HasSetMousePos: number;   // Backend Platform supports io.WantSetMousePos requests to reposition the OS mouse position (only used if ImGuiConfigFlags_NavEnableSetMousePos is set).
+    readonly RendererHasVtxOffset: number;   // Backend Renderer supports ImDrawCmd::VtxOffset. This enables output of large meshes (64K+ vertices) while still using 16-bit indices.
+  };
 
   // Window flags
   export const WindowFlags: {
