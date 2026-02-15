@@ -33,6 +33,24 @@ class ButtonWidget : public Widget {
   bool clicked_ = false;
 };
 
+class InvisibleButtonWidget : public Widget {
+ public:
+  InvisibleButtonWidget(
+      Realm* realm, v8::Local<v8::Object> object, const std::string& label, float width, float height);
+
+  void Render() override;
+
+  const std::string& label() const { return label_; }
+  void set_label(const std::string& l) { label_ = l; }
+  bool clicked() const { return clicked_; }
+
+ private:
+  std::string label_;
+  float width_ = 0.0f;
+  float height_ = 0.0f;
+  bool clicked_ = false;
+};
+
 class CheckboxWidget : public Widget {
  public:
   CheckboxWidget(Realm* realm, v8::Local<v8::Object> object, const std::string& label, bool checked);

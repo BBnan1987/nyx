@@ -16,6 +16,17 @@ void ButtonWidget::Render() {
   }
 }
 
+InvisibleButtonWidget::InvisibleButtonWidget(
+    Realm* realm, v8::Local<v8::Object> object, const std::string& label, float width, float height)
+    : Widget(realm, object), label_(label), width_(width), height_(height) {}
+
+void InvisibleButtonWidget::Render() {
+  clicked_ = ImGui::InvisibleButton(label_.c_str(), ImVec2(width_, height_));
+  if (clicked_) {
+    EmitEvent("click");
+  }
+}
+
 CheckboxWidget::CheckboxWidget(Realm* realm, v8::Local<v8::Object> object, const std::string& label, bool checked)
     : Widget(realm, object), label_(label), checked_(checked) {}
 

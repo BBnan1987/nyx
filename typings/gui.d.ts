@@ -160,6 +160,11 @@ declare module 'gui' {
     label: string;
   };
 
+  export const InvisibleButton: new (label?: string) => Widget & {
+    readonly clicked: boolean;
+    label: string;
+  };
+
   export const Checkbox: new (label?: string, checked?: boolean) => Widget & {
     checked: boolean;
     label: string;
@@ -283,6 +288,10 @@ declare module 'gui' {
   };
 
   export const ColorPicker4: new (label?: string, r?: number, g?: number, b?: number, a?: number, refR?: number, refG?: number, refB?: number, refA?: number) => Widget & {
+    label: string;
+  };
+
+  export const ColorButton: new (label?: string, r?: number, g?: number, b?: number, a?: number, width?: number, height?: number) => Widget & {
     label: string;
   };
 

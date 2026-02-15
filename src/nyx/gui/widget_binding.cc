@@ -238,6 +238,36 @@ static void ButtonSetLabel(const FunctionCallbackInfo<Value>& args) {
   }
 }
 
+static void InvisibleButtonNew(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  Environment* env = Environment::GetCurrent(context);
+  Utf8Value label(isolate, args[0]);
+  float w = args.Length() > 1 ? static_cast<float>(args[1]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  float h = args.Length() > 2 ? static_cast<float>(args[2]->NumberValue(context).FromMaybe(0.0)) : 0.0f;
+  new InvisibleButtonWidget(env->principal_realm(), args.This(), *label, w, h);
+}
+
+static void InvisibleButtonGetClicked(const FunctionCallbackInfo<Value>& args) {
+  InvisibleButtonWidget* self = BaseObject::Unwrap<InvisibleButtonWidget>(args.This());
+  if (self) args.GetReturnValue().Set(self->clicked());
+}
+
+static void InvisibleButtonGetLabel(const FunctionCallbackInfo<Value>& args) {
+  InvisibleButtonWidget* self = BaseObject::Unwrap<InvisibleButtonWidget>(args.This());
+  if (self) {
+    args.GetReturnValue().Set(String::NewFromUtf8(args.GetIsolate(), self->label().c_str()).ToLocalChecked());
+  }
+}
+
+static void InvisibleButtonSetLabel(const FunctionCallbackInfo<Value>& args) {
+  InvisibleButtonWidget* self = BaseObject::Unwrap<InvisibleButtonWidget>(args.This());
+  if (self) {
+    Utf8Value label(args.GetIsolate(), args[0]);
+    self->set_label(*label);
+  }
+}
+
 static void CheckboxNew(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
   Environment* env = Environment::GetCurrent(isolate);
@@ -1555,6 +1585,17 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
     SetProperty(isolate, proto, "clicked", ButtonGetClicked, nullptr);
     SetProperty(isolate, proto, "label", ButtonGetLabel, ButtonSetLabel);
     target->Set(OneByteString(isolate, "Button"), tmpl);
+  }
+
+  {
+    Local<FunctionTemplate> tmpl = FunctionTemplate::New(isolate, InvisibleButtonNew);
+    tmpl->SetClassName(OneByteString(isolate, "InvisibleButton"));
+    tmpl->InstanceTemplate()->SetInternalFieldCount(BaseObject::kInternalFieldCount);
+    Local<ObjectTemplate> proto = tmpl->PrototypeTemplate();
+    InstallWidgetMethods(isolate, proto);
+    SetProperty(isolate, proto, "clicked", InvisibleButtonGetClicked, nullptr);
+    SetProperty(isolate, proto, "label", InvisibleButtonGetLabel, InvisibleButtonSetLabel);
+    target->Set(OneByteString(isolate, "InvisibleButton"), tmpl);
   }
 
   {
