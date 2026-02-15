@@ -128,6 +128,96 @@ declare module 'gui' {
     readonly Down: 3;
   };
 
+  export const StyleColor: {
+    readonly Text: number;
+    readonly TextDisabled: number;
+    readonly WindowBg: number;
+    readonly ChildBg: number;
+    readonly PopupBg: number;
+    readonly Border: number;
+    readonly BorderShadow: number;
+    readonly FrameBg: number;
+    readonly FrameBgHovered: number;
+    readonly FrameBgActive: number;
+    readonly TitleBg: number;
+    readonly TitleBgActive: number;
+    readonly TitleBgCollapsed: number;
+    readonly MenuBarBg: number;
+    readonly ScrollbarBg: number;
+    readonly ScrollbarGrab: number;
+    readonly ScrollbarGrabHovered: number;
+    readonly ScrollbarGrabActive: number;
+    readonly CheckMark: number;
+    readonly SliderGrab: number;
+    readonly SliderGrabActive: number;
+    readonly Button: number;
+    readonly ButtonHovered: number;
+    readonly ButtonActive: number;
+    readonly Header: number;
+    readonly HeaderHovered: number;
+    readonly HeaderActive: number;
+    readonly Separator: number;
+    readonly SeparatorHovered: number;
+    readonly SeparatorActive: number;
+    readonly ResizeGrip: number;
+    readonly ResizeGripHovered: number;
+    readonly ResizeGripActive: number;
+    readonly Tab: number;
+    readonly TabHovered: number;
+    readonly TabActive: number;
+    readonly TabUnfocused: number;
+    readonly TabUnfocusedActive: number;
+    readonly PlotLines: number;
+    readonly PlotLinesHovered: number;
+    readonly PlotHistogram: number;
+    readonly PlotHistogramHovered: number;
+    readonly TableHeaderBg: number;
+    readonly TableBorderStrong: number;
+    readonly TableBorderLight: number;
+    readonly TableRowBg: number;
+    readonly TableRowBgAlt: number;
+    readonly TextSelectedBg: number;
+    readonly DragDropTarget: number;
+    readonly NavHighlight: number;
+    readonly NavWindowingHighlight: number;
+    readonly NavWindowingDimBg: number;
+    readonly ModalWindowDimBg: number;
+  };
+
+  export const StyleVar: {
+    readonly Alpha: number;
+    readonly DisabledAlpha: number;
+    readonly WindowPadding: number;
+    readonly WindowRounding: number;
+    readonly WindowBorderSize: number;
+    readonly WindowMinSize: number;
+    readonly WindowTitleAlign: number;
+    readonly ChildRounding: number;
+    readonly ChildBorderSize: number;
+    readonly PopupRounding: number;
+    readonly PopupBorderSize: number;
+    readonly FramePadding: number;
+    readonly FrameRounding: number;
+    readonly FrameBorderSize: number;
+    readonly ItemSpacing: number;
+    readonly ItemInnerSpacing: number;
+    readonly IndentSpacing: number;
+    readonly CellPadding: number;
+    readonly ScrollbarSize: number;
+    readonly ScrollbarRounding: number;
+    readonly GrabMinSize: number;
+    readonly GrabRounding: number;
+    readonly TabRounding: number;
+    readonly TabBorderSize: number;
+    readonly TabBarBorderSize: number;
+    readonly TableAngledHeadersAngle: number;
+    readonly ButtonTextAlign: number;
+    readonly SelectableTextAlign: number;
+    readonly SeparatorTextBorderSize: number;
+    readonly SeparatorTextAlign: number;
+    readonly SeparatorTextPadding: number;
+  };
+
   export interface IO {
     // Main display size
     readonly displaySize: { x: number; y: number };
@@ -462,6 +552,20 @@ declare module 'gui' {
   export const Indent: new (width?: number) => Widget;
   export const Unindent: new (width?: number) => Widget;
   export const Dummy: new (width?: number, height?: number) => Widget;
+
+  export const Stack: new () => Widget & {
+    id: number;
+    readonly clipRect: { min: { x: number, y: number }, max: { x: number, y: number }, intersectWithCurrentClipRect: boolean };
+    setClipRect(min_x: number, min_y: number, max_x: number, max_y: number, intersectWithCurrentClipRect: boolean): void;
+    readonly colors: Array<{ idx: number, r: number, g: number, b: number, a: number }>;
+    addColor(idx: number, r: number, g: number, b: number, a: number);
+    readonly vars: Array<{ idx: number, x: number, y: number }>;
+    addVar(idx: number, x: number, y: number);
+    tabStop: boolean;
+    buttonRepeat: boolean;
+    itemWidth: number;
+    textWrap: number;
+  }
 }
 
 declare module 'nyx:gui' {

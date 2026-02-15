@@ -10,8 +10,6 @@
 #include <vector>
 
 /** Needs implementations:
- * - ImGui::PushClipRect
- * - ImGui::PopClipRect
  * - ImGui::SetItemDefaultFocus
  * - ImGui::SetKeyboardFocusHere
  * - ImGui::SetNextItemAllowOverlap
@@ -70,29 +68,13 @@
  * - ImGui::SetMouseCursor
  * - ImGui::GetClipboardText
  * - ImGui::SetClipboardText
- * - ImGui::PushFont
- * - ImGui::PopFont
- * - ImGui::PushStyleColor
- * - ImGui::PopStyleColor
- * - ImGui::PushStyleVar
- * - ImGui::PopStyleVar
- * - ImGui::PushTabStop
- * - ImGui::PopTabStop
- * - ImGui::PushButtonRepeat
- * - ImGui::PopButtonRepeat
- * - ImGui::PushItemWidth
- * - ImGui::PopItemWidth
  * - ImGui::SetNextItemWidth
  * - ImGui::CalcItemWidth
- * - ImGui::PushTextWrapPos
- * - ImGui::PopTextWrapPos
  * - ImGui::GetFont
  * - ImGui::GetFontSize
  * - ImGui::GetFontTexUvWhitePixel
  * - ImGui::GetColorU32
  * - ImGui::GetStyleColorVec4
- * - ImGui::PushID
- * - ImGui::PopID
  * - ImGui::GetID
  */
 

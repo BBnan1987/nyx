@@ -12,6 +12,7 @@
 #include "nyx/gui/popups.h"
 #include "nyx/gui/selectable.h"
 #include "nyx/gui/slider.h"
+#include "nyx/gui/stack.h"
 #include "nyx/gui/tables.h"
 #include "nyx/gui/tabs.h"
 #include "nyx/gui/text.h"
@@ -28,6 +29,7 @@ namespace nyx {
 
 using v8::Boolean;
 using v8::Context;
+using v8::EscapableHandleScope;
 using v8::Function;
 using v8::FunctionCallbackInfo;
 using v8::FunctionTemplate;
@@ -39,6 +41,26 @@ using v8::Object;
 using v8::ObjectTemplate;
 using v8::String;
 using v8::Value;
+
+static Local<Object> CreateImVec2Object(Local<Context> context, const ImVec2& v) {
+  Isolate* isolate = context->GetIsolate();
+  EscapableHandleScope scope(isolate);
+  Local<Object> obj = Object::New(isolate);
+  obj->Set(context, OneByteString(isolate, "x"), Number::New(isolate, v.x));
+  obj->Set(context, OneByteString(isolate, "y"), Number::New(isolate, v.y));
+  return scope.Escape(obj);
+}
+
+static Local<Object> CreateImVec4Object(Local<Context> context, const ImVec4& v) {
+  Isolate* isolate = context->GetIsolate();
+  EscapableHandleScope scope(isolate);
+  Local<Object> obj = Object::New(isolate);
+  obj->Set(context, OneByteString(isolate, "x"), Number::New(isolate, v.x));
+  obj->Set(context, OneByteString(isolate, "y"), Number::New(isolate, v.y));
+  obj->Set(context, OneByteString(isolate, "z"), Number::New(isolate, v.z));
+  obj->Set(context, OneByteString(isolate, "w"), Number::New(isolate, v.w));
+  return scope.Escape(obj);
+}
 
 // forward declerations
 void CreatePerIsolatePropertiesIO(IsolateData* isolate_data, Local<ObjectTemplate> target);
@@ -1608,6 +1630,167 @@ static void DummyNew(const FunctionCallbackInfo<Value>& args) {
   new DummyWidget(env->principal_realm(), args.This(), width, height);
 }
 
+static void StackNew(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  Environment* env = Environment::GetCurrent(context);
+  new StackWidget(env->principal_realm(), args.This());
+}
+
+static void StackGetID(const FunctionCallbackInfo<Value>& args) {
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) args.GetReturnValue().Set(self->id());
+}
+
+static void StackSetID(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) self->set_id(args[0]->NumberValue(context).FromMaybe(-1));
+}
+
+static void StackGetClipRect(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) {
+    const StackWidget::ClipRectData& data = self->clip_rect();
+    Local<Object> obj = Object::New(isolate);
+    obj->Set(context, OneByteString(isolate, "min"), CreateImVec2Object(context, data.min));
+    obj->Set(context, OneByteString(isolate, "max"), CreateImVec2Object(context, data.max));
+    obj->Set(context,
+             OneByteString(isolate, "intersectWithCurrentClipRect"),
+             Boolean::New(isolate, data.intersect_with_current_clip_rect));
+    args.GetReturnValue().Set(obj);
+  }
+}
+
+static void StackSetClipRect(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  ImVec2 min = {
+      static_cast<float>(args[0]->NumberValue(context).FromMaybe(-1.0f)),
+      static_cast<float>(args[1]->NumberValue(context).FromMaybe(-1.0f)),
+  };
+  ImVec2 max = {
+      static_cast<float>(args[2]->NumberValue(context).FromMaybe(-1.0f)),
+      static_cast<float>(args[3]->NumberValue(context).FromMaybe(-1.0f)),
+  };
+  bool intersect_with_current_clip_rect = args[4]->BooleanValue(isolate);
+  if (self) {
+    self->set_clip_rect({min, max, intersect_with_current_clip_rect});
+  }
+}
+
+static void StackGetColors(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) {
+    const std::vector<StackWidget::StyleColorData> data = self->colors();
+    Local<v8::Array> arr = v8::Array::New(isolate, static_cast<int>(data.size()));
+    int32_t index = 0;
+    for (const StackWidget::StyleColorData& color : data) {
+      Local<Object> obj = Object::New(isolate);
+      obj->Set(context, OneByteString(isolate, "idx"), Number::New(isolate, color.idx));
+      obj->Set(context, OneByteString(isolate, "r"), Number::New(isolate, color.color.x));
+      obj->Set(context, OneByteString(isolate, "g"), Number::New(isolate, color.color.y));
+      obj->Set(context, OneByteString(isolate, "b"), Number::New(isolate, color.color.z));
+      obj->Set(context, OneByteString(isolate, "a"), Number::New(isolate, color.color.w));
+      arr->Set(context, index++, obj);
+    }
+    args.GetReturnValue().Set(arr);
+  }
+}
+
+static void StackAddColor(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  ImGuiCol idx = args[0]->NumberValue(context).FromMaybe(0);
+  float r = static_cast<float>(args[1]->NumberValue(context).FromMaybe(0.0f));
+  float g = static_cast<float>(args[2]->NumberValue(context).FromMaybe(0.0f));
+  float b = static_cast<float>(args[3]->NumberValue(context).FromMaybe(0.0f));
+  float a = args[4]->IsNumber() ? static_cast<float>(args[4]->NumberValue(context).FromJust()) : 1.0f;
+  if (self) self->add_color(idx, {r, g, b, a});
+}
+
+static void StackGetVars(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) {
+    const std::vector<StackWidget::StyleVarData> data = self->vars();
+    Local<v8::Array> arr = v8::Array::New(isolate, static_cast<int>(data.size()));
+    int32_t index = 0;
+    for (const StackWidget::StyleVarData& var : data) {
+      Local<Object> obj = Object::New(isolate);
+      obj->Set(context, OneByteString(isolate, "idx"), Number::New(isolate, var.idx));
+      obj->Set(context, OneByteString(isolate, "x"), Number::New(isolate, var.val.x));
+      obj->Set(context, OneByteString(isolate, "y"), Number::New(isolate, var.val.y));
+      arr->Set(context, index++, obj);
+    }
+    args.GetReturnValue().Set(arr);
+  }
+}
+
+static void StackAddVar(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  ImGuiCol idx = args[0]->NumberValue(context).FromMaybe(0);
+  float x = args[1]->NumberValue(context).FromMaybe(0.0f);
+  float y = args[2]->NumberValue(context).FromMaybe(0.0f);
+  if (self) self->add_var(idx, {x, y});
+}
+
+static void StackGetTabStop(const FunctionCallbackInfo<Value>& args) {
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) args.GetReturnValue().Set(self->tab_stop());
+}
+
+static void StackSetTabStop(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) self->set_tab_stop(args[0]->BooleanValue(isolate));
+}
+
+static void StackGetButtonRepeat(const FunctionCallbackInfo<Value>& args) {
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) args.GetReturnValue().Set(self->button_repeat());
+}
+
+static void StackSetButtonRepeat(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) self->set_button_repeat(args[0]->BooleanValue(isolate));
+}
+
+static void StackGetItemWidth(const FunctionCallbackInfo<Value>& args) {
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) args.GetReturnValue().Set(self->item_width());
+}
+
+static void StackSetItemWidth(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) self->set_item_width(args[0]->NumberValue(context).FromMaybe(0.0f));
+}
+
+static void StackGetTextWrap(const FunctionCallbackInfo<Value>& args) {
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) args.GetReturnValue().Set(self->text_wrap());
+}
+
+static void StackSetTextWrap(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  StackWidget* self = BaseObject::Unwrap<StackWidget>(args.This());
+  if (self) self->set_text_wrap(args[0]->NumberValue(context).FromMaybe(0.0f));
+}
+
 static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTemplate> target) {
   Isolate* isolate = isolate_data->isolate();
 
@@ -2227,6 +2410,25 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
     tmpl->InstanceTemplate()->SetInternalFieldCount(BaseObject::kInternalFieldCount);
     InstallWidgetMethods(isolate, tmpl->PrototypeTemplate());
     target->Set(OneByteString(isolate, "Dummy"), tmpl);
+  }
+
+  {
+    Local<FunctionTemplate> tmpl = FunctionTemplate::New(isolate, StackNew);
+    tmpl->SetClassName(OneByteString(isolate, "Stack"));
+    tmpl->InstanceTemplate()->SetInternalFieldCount(BaseObject::kInternalFieldCount);
+    Local<ObjectTemplate> proto = tmpl->PrototypeTemplate();
+    InstallWidgetMethods(isolate, proto);
+    SetProperty(isolate, proto, "id", StackGetID, StackSetID);
+    SetProperty(isolate, proto, "clipRect", StackGetClipRect);
+    SetMethod(isolate, proto, "setClipRect", StackSetClipRect);
+    SetProperty(isolate, proto, "colors", StackGetColors);
+    SetMethod(isolate, proto, "addColor", StackAddColor);
+    SetMethod(isolate, proto, "addVar", StackAddVar);
+    SetProperty(isolate, proto, "tabStop", StackGetTabStop, StackSetTabStop);
+    SetProperty(isolate, proto, "buttonRepeat", StackGetButtonRepeat, StackSetButtonRepeat);
+    SetProperty(isolate, proto, "itemWidth", StackGetItemWidth, StackSetItemWidth);
+    SetProperty(isolate, proto, "textWrap", StackGetTextWrap, StackSetTextWrap);
+    target->Set(OneByteString(isolate, "Stack"), tmpl);
   }
 
   CreatePerIsolatePropertiesIO(isolate_data, target);

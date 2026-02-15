@@ -21,6 +21,7 @@ set(NYX_SOURCES
   src/nyx/gui/popups.cc
   src/nyx/gui/selectable.cc
   src/nyx/gui/slider.cc
+  src/nyx/gui/stack.cc
   src/nyx/gui/tables.cc
   src/nyx/gui/tabs.cc
   src/nyx/gui/text.cc

@@ -1,0 +1,96 @@
+#pragma once
+
+#include "nyx/gui/widget.h"
+
+/** Implements:
+ * + ImGui::PushID
+ * + ImGui::PopID
+ * + ImGui::PushClipRect
+ * + ImGui::PopClipRect
+ * - ImGui::PushFont
+ * - ImGui::PopFont
+ * + ImGui::PushStyleColor
+ * + ImGui::PopStyleColor
+ * + ImGui::PushStyleVar
+ * + ImGui::PopStyleVar
+ * + ImGui::PushTabStop
+ * + ImGui::PopTabStop
+ * + ImGui::PushButtonRepeat
+ * + ImGui::PopButtonRepeat
+ * + ImGui::PushItemWidth
+ * + ImGui::PopItemWidth
+ * + ImGui::PushTextWrapPos
+ * + ImGui::PopTextWrapPos
+ */
+
+namespace nyx {
+
+class StackWidget : public Widget {
+ public:
+  using Widget::Widget;
+  void Render() override;
+  bool IsContainer() const override { return true; }
+
+  struct ClipRectData {
+    ImVec2 min;
+    ImVec2 max;
+    bool intersect_with_current_clip_rect;
+  };
+
+  struct StyleColorData {
+    ImGuiCol idx;
+    ImVec4 color;
+  };
+
+  struct StyleVarData {
+    ImGuiStyleVar idx;
+    ImVec2 val;
+  };
+
+  // [Push|Pop]ID
+  bool id() const { return id_; }
+  void set_id(uint32_t id) { id_ = id; }
+
+  // [Push|Pop]ClipRect
+  const ClipRectData& clip_rect() const { return clip_rect_data_; }
+  void set_clip_rect(ClipRectData data) { clip_rect_data_ = data; }
+  
+  // [Push|Pop]Font
+  // NYI
+
+  // [Push|Pop]StyleColor
+  const std::vector<StyleColorData>& colors() const { return colors_; }
+  void add_color(ImGuiCol idx, const ImVec4& col) { colors_.push_back({idx, col}); }
+  
+  // [Push|Pop]StyleVar
+  const std::vector<StyleVarData>& vars() const { return vars_; }
+  void add_var(ImGuiStyleVar idx, const ImVec2& var) { vars_.push_back({idx, var}); }
+  
+  // [Push|Pop]TabStop
+  bool tab_stop() const { return tab_stop_; }
+  void set_tab_stop(bool tab_stop) { tab_stop_ = tab_stop; }
+  
+  // [Push|Pop]ButtonRepeat
+  bool button_repeat() const { return button_repeat_; }
+  void set_button_repeat(bool button_repeat) { button_repeat_ = button_repeat; }
+  
+  // [Push|Pop]ItemWidth
+  float item_width() const { return item_width_; }
+  void set_item_width(float item_width) { item_width_ = item_width; }
+  
+  // [Push|Pop]TextWrapPos
+  float text_wrap() const { return text_wrap_; }
+  void set_text_wrap(float text_wrap) { text_wrap_ = text_wrap; }
+
+ private:
+  int32_t id_ = -1;
+  ClipRectData clip_rect_data_{{-1.0f, -1.0f}, {-1.0f, -1.0f}, false};
+  std::vector<StyleColorData> colors_;
+  std::vector<StyleVarData> vars_;
+  bool tab_stop_ = false;
+  bool button_repeat_ = false;
+  float item_width_ = 0.0f;
+  float text_wrap_ = 0.0f;
+};
+
+}  // namespace nyx
