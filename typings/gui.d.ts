@@ -187,6 +187,12 @@ declare module 'gui' {
     label: string;
   };
 
+  export const InputTextWithHint: new (label?: string, text?: string) => Widget & {
+    text: string;
+    hint: string;
+    label: string;
+  };
+
   export const Separator: new () => Widget;
   export const Spacing: new () => Widget;
   export const SameLine: new () => Widget;

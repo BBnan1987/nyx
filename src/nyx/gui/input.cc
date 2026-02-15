@@ -90,4 +90,38 @@ void InputTextMultilineWidget::Render() {
   }
 }
 
+InputTextWithHintWidget::InputTextWithHintWidget(Realm* realm,
+                                                 v8::Local<v8::Object> object,
+                                                 const std::string& label,
+                                                 size_t max_length)
+    : Widget(realm, object), label_(label), max_length_(max_length) {
+  buffer_.reserve(max_length_);
+}
+
+void InputTextWithHintWidget::set_text(const std::string& t) {
+  buffer_ = t;
+  if (buffer_.size() > max_length_) {
+    buffer_.resize(max_length_);
+  }
+}
+
+void InputTextWithHintWidget::set_hint(const std::string& t) {
+  hint_ = t;
+}
+
+void InputTextWithHintWidget::Render() {
+  std::vector<char> buf(max_length_ + 1, '\0');
+  std::copy(buffer_.begin(), buffer_.end(), buf.begin());
+
+  if (ImGui::InputTextWithHint(label_.c_str(), hint_.c_str(), buf.data(), max_length_ + 1)) {
+    std::string new_text(buf.data());
+    if (new_text != buffer_) {
+      buffer_ = std::move(new_text);
+      Isolate* iso = isolate();
+      HandleScope scope(iso);
+      EmitEvent("change", v8::String::NewFromUtf8(iso, buffer_.c_str()).ToLocalChecked());
+    }
+  }
+}
+
 }  // namespace nyx

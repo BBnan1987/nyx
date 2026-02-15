@@ -5,10 +5,10 @@
 /** Implements:
  * + ImGui::Button
  * + ImGui::SmallButton
- * - ImGui::InvisibleButton
+ * + ImGui::InvisibleButton
  * + ImGui::ArrowButton
  * + ImGui::Checkbox
- * - ImGui::CheckboxFlags
+ * - ImGui::CheckboxFlags just make CheckboxWidget use this instead of Checkbox with default flags
  * + ImGui::RadioButton
  * + ImGui::ProgressBar
  * + ImGui::Bullet

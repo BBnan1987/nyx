@@ -78,4 +78,25 @@ class InputTextMultilineWidget : public Widget {
   float width_, height_;
 };
 
+class InputTextWithHintWidget : public Widget {
+ public:
+  InputTextWithHintWidget(Realm* realm,
+                           v8::Local<v8::Object> object,
+                           const std::string& label,
+                           size_t max_length);
+  void Render() override;
+  const std::string& label() const { return label_; }
+  void set_label(const std::string& l) { label_ = l; }
+  const std::string& text() const { return buffer_; }
+  void set_text(const std::string& t);
+  const std::string& hint() const { return buffer_; }
+  void set_hint(const std::string& t);
+
+ private:
+  std::string label_;
+  std::string buffer_;
+  std::string hint_;
+  size_t max_length_;
+};
+
 }  // namespace nyx

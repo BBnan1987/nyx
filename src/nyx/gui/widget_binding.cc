@@ -871,6 +871,60 @@ static void InputTextMultilineSetLabel(const FunctionCallbackInfo<Value>& args) 
   }
 }
 
+static void InputTextWithHintNew(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Local<Context> context = isolate->GetCurrentContext();
+  Environment* env = Environment::GetCurrent(context);
+  Utf8Value label(isolate, args[0]);
+  size_t max_length = args.Length() > 1 ? static_cast<size_t>(args[1]->Uint32Value(context).FromMaybe(256)) : 256;
+  new InputTextWithHintWidget(env->principal_realm(), args.This(), *label, max_length);
+}
+
+static void InputTextWithHintGetText(const FunctionCallbackInfo<Value>& args) {
+  InputTextWithHintWidget* self = BaseObject::Unwrap<InputTextWithHintWidget>(args.This());
+  if (self) {
+    args.GetReturnValue().Set(String::NewFromUtf8(args.GetIsolate(), self->text().c_str()).ToLocalChecked());
+  }
+}
+
+static void InputTextWithHintSetText(const FunctionCallbackInfo<Value>& args) {
+  InputTextWithHintWidget* self = BaseObject::Unwrap<InputTextWithHintWidget>(args.This());
+  if (self) {
+    Utf8Value text(args.GetIsolate(), args[0]);
+    self->set_text(*text);
+  }
+}
+
+static void InputTextWithHintGetHint(const FunctionCallbackInfo<Value>& args) {
+  InputTextWithHintWidget* self = BaseObject::Unwrap<InputTextWithHintWidget>(args.This());
+  if (self) {
+    args.GetReturnValue().Set(String::NewFromUtf8(args.GetIsolate(), self->hint().c_str()).ToLocalChecked());
+  }
+}
+
+static void InputTextWithHintSetHint(const FunctionCallbackInfo<Value>& args) {
+  InputTextWithHintWidget* self = BaseObject::Unwrap<InputTextWithHintWidget>(args.This());
+  if (self) {
+    Utf8Value hint(args.GetIsolate(), args[0]);
+    self->set_hint(*hint);
+  }
+}
+
+static void InputTextWithHintGetLabel(const FunctionCallbackInfo<Value>& args) {
+  InputTextWithHintWidget* self = BaseObject::Unwrap<InputTextWithHintWidget>(args.This());
+  if (self) {
+    args.GetReturnValue().Set(String::NewFromUtf8(args.GetIsolate(), self->label().c_str()).ToLocalChecked());
+  }
+}
+
+static void InputTextWithHintSetLabel(const FunctionCallbackInfo<Value>& args) {
+  InputTextWithHintWidget* self = BaseObject::Unwrap<InputTextWithHintWidget>(args.This());
+  if (self) {
+    Utf8Value label(args.GetIsolate(), args[0]);
+    self->set_label(*label);
+  }
+}
+
 static void ColorEdit3New(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
   Local<Context> context = isolate->GetCurrentContext();
@@ -1868,6 +1922,18 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
     SetProperty(isolate, proto, "text", InputTextMultilineGetText, InputTextMultilineSetText);
     SetProperty(isolate, proto, "label", InputTextMultilineGetLabel, InputTextMultilineSetLabel);
     target->Set(OneByteString(isolate, "InputTextMultiline"), tmpl);
+  }
+
+  {
+    Local<FunctionTemplate> tmpl = FunctionTemplate::New(isolate, InputTextWithHintNew);
+    tmpl->SetClassName(OneByteString(isolate, "InputTextWithHint"));
+    tmpl->InstanceTemplate()->SetInternalFieldCount(BaseObject::kInternalFieldCount);
+    Local<ObjectTemplate> proto = tmpl->PrototypeTemplate();
+    InstallWidgetMethods(isolate, proto);
+    SetProperty(isolate, proto, "text", InputTextWithHintGetText, InputTextWithHintSetText);
+    SetProperty(isolate, proto, "hint", InputTextWithHintGetHint, InputTextWithHintSetHint);
+    SetProperty(isolate, proto, "label", InputTextWithHintGetLabel, InputTextWithHintSetLabel);
+    target->Set(OneByteString(isolate, "InputTextWithHint"), tmpl);
   }
 
   {
