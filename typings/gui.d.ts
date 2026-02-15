@@ -1,4 +1,17 @@
 declare module 'gui' {
+  export const ConfigFlags: {
+    readonly None: number;
+    readonly NavEnableKeyboard: number;
+    readonly NavEnableGamepad: number;
+    readonly NavEnableSetMousePos: number;
+    readonly NavNoCaptureKeyboard: number;
+    readonly NoMouse: number;
+    readonly NoMouseCursorChange: number;
+
+    readonly IsSRGB: number;
+    readonly IsTouchScreen: number;
+  }
+
   // Window flags
   export const WindowFlags: {
     readonly None: 0;
@@ -226,6 +239,12 @@ declare module 'gui' {
   export const Checkbox: new (label?: string, checked?: boolean) => Widget & {
     checked: boolean;
     label: string;
+  };
+
+  export const CheckboxFlags: new (label: string, obj: object, property: string, flags: number) => Widget & {
+    checked: boolean;
+    label: string;
+    flags: number;
   };
 
   export const SliderFloat: new (label?: string, value?: number, min?: number, max?: number) => Widget & {

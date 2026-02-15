@@ -8,7 +8,7 @@
  * + ImGui::InvisibleButton
  * + ImGui::ArrowButton
  * + ImGui::Checkbox
- * - ImGui::CheckboxFlags just make CheckboxWidget use this instead of Checkbox with default flags
+ * + ImGui::CheckboxFlags implemented in JS-land
  * + ImGui::RadioButton
  * + ImGui::ProgressBar
  * + ImGui::Bullet
