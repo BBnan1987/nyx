@@ -50,14 +50,24 @@ void Widget::ClearChildren() {
 }
 
 void Widget::On(const std::string& event, Local<Function> callback) {
-  event_handlers_[event].Reset(isolate(), callback);
+  event_handlers_[event].emplace_back().Reset(isolate(), callback);
 }
 
-void Widget::Off(const std::string& event) {
+void Widget::Off(const std::string& event, Local<Function> callback) {
+  HandleScope scope(isolate());
+  Local<Context> context = realm()->context();
   auto it = event_handlers_.find(event);
   if (it != event_handlers_.end()) {
-    it->second.Reset();
-    event_handlers_.erase(it);
+    auto fn_it = it->second.begin();
+    while (fn_it != it->second.end()) {
+      Local<Function> fn = (*fn_it).Get(isolate());
+      if (callback->Equals(context, fn).FromMaybe(false)) {
+        (*fn_it).Reset();
+        fn_it = it->second.erase(fn_it);
+      } else {
+        fn_it++;
+      }
+    }
   }
 }
 
@@ -78,11 +88,13 @@ void Widget::EmitEvent(const std::string& event) {
   Isolate* iso = isolate();
   HandleScope scope(iso);
   Local<Context> ctx = env()->context();
-  Local<Function> fn = it->second.Get(iso);
-  if (fn.IsEmpty()) return;
+  for (const Global<Function>& it : it->second) {
+    Local<Function> fn = it.Get(iso);
+    if (fn.IsEmpty()) continue;
 
-  TryCatchScope try_catch(iso);
-  fn->Call(ctx, object(), 0, nullptr).IsEmpty();
+    TryCatchScope try_catch(iso);
+    fn->Call(ctx, object(), 0, nullptr).IsEmpty();
+  }
 }
 
 void Widget::EmitEvent(const std::string& event, Local<Value> arg) {
@@ -92,12 +104,14 @@ void Widget::EmitEvent(const std::string& event, Local<Value> arg) {
   Isolate* iso = isolate();
   HandleScope scope(iso);
   Local<Context> ctx = env()->context();
-  Local<Function> fn = it->second.Get(iso);
-  if (fn.IsEmpty()) return;
+  for (const Global<Function>& it : it->second) {
+    Local<Function> fn = it.Get(iso);
+    if (fn.IsEmpty()) continue;
 
-  TryCatchScope try_catch(iso);
-  Local<Value> args[] = {arg};
-  fn->Call(ctx, object(), 1, args).IsEmpty();
+    TryCatchScope try_catch(iso);
+    Local<Value> args[] = {arg};
+    fn->Call(ctx, object(), 1, args).IsEmpty();
+  }
 }
 
 ChildWidget::ChildWidget(Realm* realm,

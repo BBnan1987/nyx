@@ -75,7 +75,12 @@ static void WidgetOff(const FunctionCallbackInfo<Value>& args) {
   ASSIGN_OR_RETURN_UNWRAP(&self, args.This());
   Isolate* isolate = args.GetIsolate();
   Utf8Value event(isolate, args[0]);
-  self->Off(*event);
+  if (!args[1]->IsFunction()) {
+    isolate->ThrowError("Expected function");
+    return;
+  }
+  Local<Function> fun(args[1].As<Function>());
+  self->Off(*event, fun);
 }
 
 static void WidgetDestroy(const FunctionCallbackInfo<Value>& args) {

@@ -120,7 +120,7 @@ class Widget : public BaseObject {
   void set_visible(bool v) { visible_ = v; }
 
   void On(const std::string& event, v8::Local<v8::Function> callback);
-  void Off(const std::string& event);
+  void Off(const std::string& event, v8::Local<v8::Function> callback);
 
  protected:
   void RenderChildren();
@@ -130,7 +130,7 @@ class Widget : public BaseObject {
   Widget* parent_ = nullptr;
   std::vector<Widget*> children_;
   bool visible_ = true;
-  std::unordered_map<std::string, v8::Global<v8::Function>> event_handlers_;
+  std::unordered_map<std::string, std::vector<v8::Global<v8::Function>>> event_handlers_;
 };
 
 class ChildWidget : public Widget {
