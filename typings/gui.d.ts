@@ -558,9 +558,9 @@ declare module 'gui' {
     readonly clipRect: { min: { x: number, y: number }, max: { x: number, y: number }, intersectWithCurrentClipRect: boolean };
     setClipRect(min_x: number, min_y: number, max_x: number, max_y: number, intersectWithCurrentClipRect: boolean): void;
     readonly colors: Array<{ idx: number, r: number, g: number, b: number, a: number }>;
-    addColor(idx: number, r: number, g: number, b: number, a: number);
+    setColor(idx: number, r: number, g: number, b: number, a: number);
     readonly vars: Array<{ idx: number, x: number, y: number }>;
-    addVar(idx: number, x: number, y: number);
+    setVar(idx: number, x: number, y: number);
     tabStop: boolean;
     buttonRepeat: boolean;
     itemWidth: number;

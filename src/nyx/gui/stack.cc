@@ -14,13 +14,13 @@ void StackWidget::Render() {
     ImGui::PushClipRect(clip_rect_data_.min, clip_rect_data_.max, clip_rect_data_.intersect_with_current_clip_rect);
   }
   if (!colors_.empty()) {
-    for (const StyleColorData& color_data : colors_) {
-      ImGui::PushStyleColor(color_data.idx, color_data.color);
+    for (const auto& [idx, color] : colors_) {
+      ImGui::PushStyleColor(idx, color);
     }
   }
   if (!vars_.empty()) {
-    for (const StyleVarData& var_data : vars_) {
-      ImGui::PushStyleVar(var_data.idx, var_data.val);
+    for (const auto& [idx, value] : vars_) {
+      ImGui::PushStyleVar(idx, value);
     }
   }
   ImGui::PushTabStop(tab_stop_);

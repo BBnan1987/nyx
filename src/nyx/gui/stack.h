@@ -2,6 +2,8 @@
 
 #include "nyx/gui/widget.h"
 
+#include <map>
+
 /** Implements:
  * + ImGui::PushID
  * + ImGui::PopID
@@ -37,16 +39,6 @@ class StackWidget : public Widget {
     bool intersect_with_current_clip_rect;
   };
 
-  struct StyleColorData {
-    ImGuiCol idx;
-    ImVec4 color;
-  };
-
-  struct StyleVarData {
-    ImGuiStyleVar idx;
-    ImVec2 val;
-  };
-
   // [Push|Pop]ID
   bool id() const { return id_; }
   void set_id(uint32_t id) { id_ = id; }
@@ -59,12 +51,12 @@ class StackWidget : public Widget {
   // NYI
 
   // [Push|Pop]StyleColor
-  const std::vector<StyleColorData>& colors() const { return colors_; }
-  void add_color(ImGuiCol idx, const ImVec4& col) { colors_.push_back({idx, col}); }
+  const std::map<ImGuiCol, ImVec4>& colors() const { return colors_; }
+  void set_color(ImGuiCol idx, const ImVec4& col) { colors_[idx] = col; }
   
   // [Push|Pop]StyleVar
-  const std::vector<StyleVarData>& vars() const { return vars_; }
-  void add_var(ImGuiStyleVar idx, const ImVec2& var) { vars_.push_back({idx, var}); }
+  const std::map<ImGuiStyleVar, ImVec2>& vars() const { return vars_; }
+  void set_var(ImGuiStyleVar idx, const ImVec2& var) { vars_[idx] = var; }
   
   // [Push|Pop]TabStop
   bool tab_stop() const { return tab_stop_; }
@@ -85,8 +77,8 @@ class StackWidget : public Widget {
  private:
   int32_t id_ = -1;
   ClipRectData clip_rect_data_{{-1.0f, -1.0f}, {-1.0f, -1.0f}, false};
-  std::vector<StyleColorData> colors_;
-  std::vector<StyleVarData> vars_;
+  std::map<ImGuiCol, ImVec4> colors_;
+  std::map<ImGuiStyleVar, ImVec2> vars_;
   bool tab_stop_ = false;
   bool button_repeat_ = false;
   float item_width_ = 0.0f;
