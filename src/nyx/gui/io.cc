@@ -176,8 +176,7 @@ void CreatePerIsolatePropertiesIO(IsolateData* isolate_data, Local<ObjectTemplat
       isolate,
       tmpl,
       "keyRepeatDelay",
-      [](const FunctionCallbackInfo<Value>& args) { args.GetReturnValue().Set(ImGui::GetIO().KeyRepeatDelay);
-      },
+      [](const FunctionCallbackInfo<Value>& args) { args.GetReturnValue().Set(ImGui::GetIO().KeyRepeatDelay); },
       [](const FunctionCallbackInfo<Value>& args) {
         Isolate* isolate = args.GetIsolate();
         Environment* env = Environment::GetCurrent(isolate);
@@ -219,6 +218,157 @@ void CreatePerIsolatePropertiesIO(IsolateData* isolate_data, Local<ObjectTemplat
         Environment* env = Environment::GetCurrent(isolate);
         Local<Context> context = env->context();
         ImGui::GetIO().BackendFlags = args[0]->Uint32Value(context).FromMaybe(0);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configInputTrickleEventQueue",
+      [](const FunctionCallbackInfo<Value>& args) {
+        args.GetReturnValue().Set(ImGui::GetIO().ConfigInputTrickleEventQueue);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigInputTrickleEventQueue = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "mouseDrawCursor",
+      [](const FunctionCallbackInfo<Value>& args) { args.GetReturnValue().Set(ImGui::GetIO().MouseDrawCursor); },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().MouseDrawCursor = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configInputTextCursorBlink",
+      [](const FunctionCallbackInfo<Value>& args) {
+        args.GetReturnValue().Set(ImGui::GetIO().ConfigInputTextCursorBlink);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigInputTextCursorBlink = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configInputTextEnterKeepActive",
+      [](const FunctionCallbackInfo<Value>& args) {
+        args.GetReturnValue().Set(ImGui::GetIO().ConfigInputTextEnterKeepActive);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigInputTextEnterKeepActive = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configDragClickToInputText",
+      [](const FunctionCallbackInfo<Value>& args) {
+        args.GetReturnValue().Set(ImGui::GetIO().ConfigDragClickToInputText);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigDragClickToInputText = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configWindowsResizeFromEdges",
+      [](const FunctionCallbackInfo<Value>& args) {
+        args.GetReturnValue().Set(ImGui::GetIO().ConfigWindowsResizeFromEdges);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigWindowsResizeFromEdges = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configWindowsMoveFromTitleBarOnly",
+      [](const FunctionCallbackInfo<Value>& args) {
+        args.GetReturnValue().Set(ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigWindowsMoveFromTitleBarOnly = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configMacOSXBehaviors",
+      [](const FunctionCallbackInfo<Value>& args) { args.GetReturnValue().Set(ImGui::GetIO().ConfigMacOSXBehaviors);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigMacOSXBehaviors = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configDebugIsDebuggerPresent",
+      [](const FunctionCallbackInfo<Value>& args) {
+        args.GetReturnValue().Set(ImGui::GetIO().ConfigDebugIsDebuggerPresent);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigDebugIsDebuggerPresent = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configDebugBeginReturnValueOnce",
+      [](const FunctionCallbackInfo<Value>& args) {
+        args.GetReturnValue().Set(ImGui::GetIO().ConfigDebugBeginReturnValueOnce);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigDebugBeginReturnValueOnce = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configDebugBeginReturnValueLoop",
+      [](const FunctionCallbackInfo<Value>& args) {
+        args.GetReturnValue().Set(ImGui::GetIO().ConfigDebugBeginReturnValueLoop);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigDebugBeginReturnValueLoop = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configDebugIgnoreFocusLoss",
+      [](const FunctionCallbackInfo<Value>& args) {
+        args.GetReturnValue().Set(ImGui::GetIO().ConfigDebugIgnoreFocusLoss);
+      },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigDebugIgnoreFocusLoss = args[0]->BooleanValue(isolate);
+      });
+
+  SetProperty(
+      isolate,
+      tmpl,
+      "configDebugIniSettings",
+      [](const FunctionCallbackInfo<Value>& args) { args.GetReturnValue().Set(ImGui::GetIO().ConfigDebugIniSettings); },
+      [](const FunctionCallbackInfo<Value>& args) {
+        Isolate* isolate = args.GetIsolate();
+        ImGui::GetIO().ConfigDebugIniSettings = args[0]->BooleanValue(isolate);
       });
 
   target->Set(isolate, "io", tmpl);

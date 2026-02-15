@@ -173,6 +173,20 @@ declare module 'gui' {
     // Config flags
     configFlags: number;
     backendFlags: number;
+
+    backendFlags: boolean;
+    mouseDrawCursor: boolean;
+    configInputTextCursorBlink: boolean;
+    configInputTextEnterKeepActive: boolean;
+    configDragClickToInputText: boolean;
+    configWindowsResizeFromEdges: boolean;
+    configWindowsMoveFromTitleBarOnly: boolean;
+    configMacOSXBehaviors: boolean;
+    configDebugIsDebuggerPresent: boolean;
+    configDebugBeginReturnValueOnce: boolean;
+    configDebugBeginReturnValueLoop: boolean;
+    configDebugIgnoreFocusLoss: boolean;
+    configDebugIniSettings: boolean;
   }
 
   // ImGui IO singleton
@@ -236,12 +250,12 @@ declare module 'gui' {
     label: string;
   };
 
-  export const Checkbox: new (label?: string, checked?: boolean) => Widget & {
+  export const Checkbox: new (label?: string, obj: object, property: string) => Widget & {
     checked: boolean;
     label: string;
   };
 
-  export const CheckboxFlags: new (label: string, obj: object, property: string, flags: number) => Widget & {
+  export const CheckboxFlags: new (label?: string, obj: object, property: string, flags: number) => Widget & {
     checked: boolean;
     label: string;
     flags: number;

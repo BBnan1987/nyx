@@ -7,7 +7,7 @@
  * + ImGui::SmallButton
  * + ImGui::InvisibleButton
  * + ImGui::ArrowButton
- * + ImGui::Checkbox
+ * + ImGui::Checkbox real implementation in JS-land
  * + ImGui::CheckboxFlags implemented in JS-land
  * + ImGui::RadioButton
  * + ImGui::ProgressBar
