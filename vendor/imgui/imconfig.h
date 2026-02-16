@@ -139,6 +139,25 @@ inline float GetFloatProperty(v8::Isolate* isolate,
   return default_value;
 }
 
+inline float GetFloatValue(v8::Local<v8::Value> val, float default_value = 0.0f) {
+  if (val->IsNumber()) {
+    return static_cast<float>(val.As<v8::Number>()->Value());
+  }
+  return default_value;
+}
+
+inline float GetArrayElement(v8::Isolate* isolate,
+                             v8::Local<v8::Array> arr,
+                             uint32_t index,
+                             float default_value = 0.0f) {
+  v8::Local<v8::Context> context = isolate->GetCurrentContext();
+  v8::Local<v8::Value> val;
+  if (arr->Get(context, index).ToLocal(&val) && val->IsNumber()) {
+    return static_cast<float>(val.As<v8::Number>()->Value());
+  }
+  return default_value;
+}
+
 #define IM_VEC2_CLASS_EXTRA                                                                                            \
   ImVec2(v8::Isolate* isolate, v8::Local<v8::Value> obj) {                                                             \
     if (obj->IsObject()) {                                                                                             \
@@ -147,7 +166,12 @@ inline float GetFloatProperty(v8::Isolate* isolate,
       x = y = 0.0f;                                                                                                    \
     }                                                                                                                  \
   }                                                                                                                    \
+  ImVec2(v8::Local<v8::Value> _x, v8::Local<v8::Value> _y) : x(GetFloatValue(_x)), y(GetFloatValue(_y)) {}             \
   static ImVec2 FromObject(v8::Isolate* isolate, v8::Local<v8::Object> obj) {                                          \
+    if (obj->IsArray()) {                                                                                              \
+      v8::Local<v8::Array> arr = obj.As<v8::Array>();                                                                  \
+      return ImVec2(GetArrayElement(isolate, arr, 0), GetArrayElement(isolate, arr, 1));                               \
+    }                                                                                                                  \
     return ImVec2(GetFloatProperty(isolate, obj, "x"), GetFloatProperty(isolate, obj, "y"));                           \
   }                                                                                                                    \
   v8::Local<v8::Object> ToObject(v8::Local<v8::Context> context) const {                                               \
@@ -167,11 +191,30 @@ inline float GetFloatProperty(v8::Isolate* isolate,
       w = 1.0f;                                                                                                        \
     }                                                                                                                  \
   }                                                                                                                    \
+  ImVec4(v8::Local<v8::Value> _x, v8::Local<v8::Value> _y, v8::Local<v8::Value> _z, v8::Local<v8::Value> _w)           \
+      : x(GetFloatValue(_x)), y(GetFloatValue(_y)), z(GetFloatValue(_z)), w(GetFloatValue(_w)) {}                      \
   static ImVec4 FromObject(v8::Isolate* isolate, v8::Local<v8::Object> obj) {                                          \
-    return ImVec4(GetFloatProperty(isolate, obj, "x"),                                                                 \
-                  GetFloatProperty(isolate, obj, "y"),                                                                 \
-                  GetFloatProperty(isolate, obj, "z"),                                                                 \
-                  GetFloatProperty(isolate, obj, "w", 1.0f));                                                          \
+    if (obj->IsArray()) {                                                                                              \
+      v8::Local<v8::Array> arr = obj.As<v8::Array>();                                                                  \
+      return ImVec4(GetArrayElement(isolate, arr, 0),                                                                  \
+                    GetArrayElement(isolate, arr, 1),                                                                  \
+                    GetArrayElement(isolate, arr, 2),                                                                  \
+                    GetArrayElement(isolate, arr, 3, 1.0f));                                                           \
+    }                                                                                                                  \
+    return GetXYZOrRGBFromObject(isolate, obj);                                                                        \
+  }                                                                                                                    \
+  static ImVec4 GetXYZOrRGBFromObject(v8::Isolate* isolate, v8::Local<v8::Object> obj) {                               \
+    v8::Local<v8::Context> context = isolate->GetCurrentContext();                                                     \
+    if (obj->Has(context, v8::String::NewFromUtf8(isolate, "x").ToLocalChecked()).FromMaybe(false)) {                  \
+      return ImVec4(GetFloatProperty(isolate, obj, "x"),                                                               \
+                    GetFloatProperty(isolate, obj, "y"),                                                               \
+                    GetFloatProperty(isolate, obj, "z"),                                                               \
+                    GetFloatProperty(isolate, obj, "w"));                                                              \
+    }                                                                                                                  \
+    return ImVec4(GetFloatProperty(isolate, obj, "r"),                                                                 \
+                  GetFloatProperty(isolate, obj, "g"),                                                                 \
+                  GetFloatProperty(isolate, obj, "b"),                                                                 \
+                  GetFloatProperty(isolate, obj, "a", 1.0f));                                                          \
   }                                                                                                                    \
   v8::Local<v8::Object> ToObject(v8::Local<v8::Context> context) const {                                               \
     v8::Isolate* isolate = context->GetIsolate();                                                                      \

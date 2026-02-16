@@ -22,7 +22,6 @@
 #include "nyx/gui/widget_manager.h"
 #include "nyx/nyx_binding.h"
 #include "nyx/util.h"
-#include "nyx/imgui_v8.h"
 
 namespace nyx {
 
@@ -40,26 +39,6 @@ using v8::Object;
 using v8::ObjectTemplate;
 using v8::String;
 using v8::Value;
-
-static Local<Object> CreateImVec2Object(Local<Context> context, const ImVec2& v) {
-  Isolate* isolate = context->GetIsolate();
-  EscapableHandleScope scope(isolate);
-  Local<Object> obj = Object::New(isolate);
-  obj->Set(context, OneByteString(isolate, "x"), Number::New(isolate, v.x));
-  obj->Set(context, OneByteString(isolate, "y"), Number::New(isolate, v.y));
-  return scope.Escape(obj);
-}
-
-static Local<Object> CreateImVec4Object(Local<Context> context, const ImVec4& v) {
-  Isolate* isolate = context->GetIsolate();
-  EscapableHandleScope scope(isolate);
-  Local<Object> obj = Object::New(isolate);
-  obj->Set(context, OneByteString(isolate, "x"), Number::New(isolate, v.x));
-  obj->Set(context, OneByteString(isolate, "y"), Number::New(isolate, v.y));
-  obj->Set(context, OneByteString(isolate, "z"), Number::New(isolate, v.z));
-  obj->Set(context, OneByteString(isolate, "w"), Number::New(isolate, v.w));
-  return scope.Escape(obj);
-}
 
 // forward declerations
 void CreatePerIsolatePropertiesIO(IsolateData* isolate_data, Local<ObjectTemplate> target);
@@ -1655,8 +1634,8 @@ static void StackGetClipRect(const FunctionCallbackInfo<Value>& args) {
   if (self) {
     const StackWidget::ClipRectData& data = self->clip_rect();
     Local<Object> obj = Object::New(isolate);
-    obj->Set(context, OneByteString(isolate, "min"), CreateImVec2Object(context, data.min));
-    obj->Set(context, OneByteString(isolate, "max"), CreateImVec2Object(context, data.max));
+    obj->Set(context, OneByteString(isolate, "min"), data.min.ToObject(context));
+    obj->Set(context, OneByteString(isolate, "max"), data.max.ToObject(context));
     obj->Set(context,
              OneByteString(isolate, "intersectWithCurrentClipRect"),
              Boolean::New(isolate, data.intersect_with_current_clip_rect));

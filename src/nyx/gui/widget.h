@@ -1,9 +1,9 @@
 #pragma once
 
 #include "nyx/base_object.h"
-#include "nyx/imgui_v8.h"
 #include "nyx/util.h"
 
+#include <imgui.h>
 #include <memory>
 #include <string>
 #include <unordered_map>

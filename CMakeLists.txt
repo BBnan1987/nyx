@@ -59,7 +59,9 @@ add_library(nyx::nyx ALIAS nyx)
 target_js_sources(nyx lib ${CMAKE_CURRENT_BINARY_DIR}/compiled_builtins.cc)
 target_include_directories(nyx PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(nyx PUBLIC uv_a simdutf v8 imgui)
-target_compile_definitions(nyx PUBLIC NYX_DEBUG WIN32_LEAN_AND_MEAN)
+target_compile_definitions(nyx PUBLIC
+  NYX_DEBUG WIN32_LEAN_AND_MEAN
+  NYX_IMGUI_V8_INTEGRATION)
 
 install(
   DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/typings

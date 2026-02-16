@@ -14,15 +14,6 @@ using v8::Object;
 using v8::ObjectTemplate;
 using v8::Value;
 
-static Local<Object> CreateImVec2Object(Local<Context> context, const ImVec2& v) {
-  Isolate* isolate = context->GetIsolate();
-  EscapableHandleScope scope(isolate);
-  Local<Object> obj = Object::New(isolate);
-  obj->Set(context, OneByteString(isolate, "x"), Number::New(isolate, v.x));
-  obj->Set(context, OneByteString(isolate, "y"), Number::New(isolate, v.y));
-  return scope.Escape(obj);
-}
-
 void CreatePerIsolatePropertiesIO(IsolateData* isolate_data, Local<ObjectTemplate> target) {
   Isolate* isolate = isolate_data->isolate();
   Local<ObjectTemplate> tmpl = ObjectTemplate::New(isolate);
@@ -35,21 +26,21 @@ void CreatePerIsolatePropertiesIO(IsolateData* isolate_data, Local<ObjectTemplat
     Isolate* isolate = args.GetIsolate();
     Environment* env = Environment::GetCurrent(isolate);
     Local<Context> context = env->context();
-    args.GetReturnValue().Set(CreateImVec2Object(context, ImGui::GetIO().DisplaySize));
+    args.GetReturnValue().Set(ImGui::GetIO().DisplaySize.ToObject(context));
   });
 
   SetProperty(isolate, tmpl, "displayFramebufferScale", [](const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = args.GetIsolate();
     Environment* env = Environment::GetCurrent(isolate);
     Local<Context> context = env->context();
-    args.GetReturnValue().Set(CreateImVec2Object(context, ImGui::GetIO().DisplayFramebufferScale));
+    args.GetReturnValue().Set(ImGui::GetIO().DisplayFramebufferScale.ToObject(context));
   });
 
   SetProperty(isolate, tmpl, "mousePos", [](const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = args.GetIsolate();
     Environment* env = Environment::GetCurrent(isolate);
     Local<Context> context = env->context();
-    args.GetReturnValue().Set(CreateImVec2Object(context, ImGui::GetIO().MousePos));
+    args.GetReturnValue().Set(ImGui::GetIO().MousePos.ToObject(context));
   });
 
   SetProperty(isolate, tmpl, "mouseWheel", [](const FunctionCallbackInfo<Value>& args) {
@@ -306,8 +297,7 @@ void CreatePerIsolatePropertiesIO(IsolateData* isolate_data, Local<ObjectTemplat
       isolate,
       tmpl,
       "configMacOSXBehaviors",
-      [](const FunctionCallbackInfo<Value>& args) { args.GetReturnValue().Set(ImGui::GetIO().ConfigMacOSXBehaviors);
-      },
+      [](const FunctionCallbackInfo<Value>& args) { args.GetReturnValue().Set(ImGui::GetIO().ConfigMacOSXBehaviors); },
       [](const FunctionCallbackInfo<Value>& args) {
         Isolate* isolate = args.GetIsolate();
         ImGui::GetIO().ConfigMacOSXBehaviors = args[0]->BooleanValue(isolate);
