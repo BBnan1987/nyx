@@ -22,8 +22,7 @@
 #include "nyx/gui/widget_manager.h"
 #include "nyx/nyx_binding.h"
 #include "nyx/util.h"
-
-#include <imgui.h>
+#include "nyx/imgui_v8.h"
 
 namespace nyx {
 
