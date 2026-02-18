@@ -1,5 +1,6 @@
 #include "nyx/game_lock.h"
 
+#include <chrono>
 #include <thread>
 
 namespace nyx {
@@ -24,6 +25,36 @@ void GameLock::Open(std::chrono::milliseconds timeout) {
     // If someone is still holding the lock, wait for them to release
     if (lock_held_.load()) {
       cv_lock_released_.wait(lock, [this]() { return !lock_held_.load(); });
+    }
+  }
+}
+
+void GameLock::Open(std::function<void()> pump, std::chrono::milliseconds timeout) {
+  auto deadline = std::chrono::steady_clock::now() + timeout;
+
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    lock_open_ = true;
+  }
+  cv_lock_available_.notify_all();
+
+  // Pump the caller's work queue until the window expires.
+  while (std::chrono::steady_clock::now() < deadline) {
+    pump();
+    std::this_thread::sleep_for(std::chrono::microseconds(50));
+  }
+
+  {
+    std::unique_lock<std::mutex> lock(mutex_);
+    lock_open_ = false;
+
+    // If the lock holder called RunOnMainThread it will be blocked; keep
+    // pumping (outside the mutex) until it releases.
+    while (lock_held_.load()) {
+      lock.unlock();
+      pump();
+      std::this_thread::sleep_for(std::chrono::microseconds(50));
+      lock.lock();
     }
   }
 }

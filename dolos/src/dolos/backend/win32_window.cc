@@ -1,6 +1,7 @@
 #include "dolos/backend/win32_window.h"
 
 #include "dolos/game.h"
+#include "dolos/main_thread.h"
 #include "dolos/pipe_log.h"
 #include "nyx/game_lock.h"
 #include "nyx/imgui_input_event.h"
@@ -384,9 +385,9 @@ BOOL Win32Window::PeekMessageDetour(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, 
         ev.display_size = {(float)(rect.right - rect.left), (float)(rect.bottom - rect.top)};
         nyx_imgui_->PushInputEvent(ev);
 
-        // yield to for safe memory reads
+        // yield to for safe memory reads, pumping main-thread work while open
         if (game_lock_) {
-          game_lock_->Open();
+          game_lock_->Open(dolos::DrainMainThreadQueue);
         }
       }
       if (consume_message) {

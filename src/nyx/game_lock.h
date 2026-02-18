@@ -3,6 +3,7 @@
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+#include <functional>
 #include <mutex>
 #include <thread>
 
@@ -11,6 +12,7 @@ namespace nyx {
 class GameLock {
  public:
   void Open(std::chrono::milliseconds timeout = std::chrono::milliseconds(2));
+  void Open(std::function<void()> pump, std::chrono::milliseconds timeout = std::chrono::milliseconds(2));
 
   bool Acquire(std::chrono::milliseconds timeout = std::chrono::milliseconds(100));
   void Release();

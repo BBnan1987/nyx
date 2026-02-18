@@ -3,6 +3,7 @@ add_subdirectory(vendor)
 set(DOLOS_SOURCES
   src/dolos/dolos.cc
   src/dolos/dolos_binding.cc
+  src/dolos/main_thread.cc
   src/dolos/backend/d3d12_imgui.cc
   src/dolos/backend/d3d12_renderer.cc
   src/dolos/backend/renderer.cc
