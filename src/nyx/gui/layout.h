@@ -35,18 +35,32 @@ namespace nyx {
 class SeparatorWidget : public Widget {
  public:
   using Widget::Widget;
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
 };
 
 class SpacingWidget : public Widget {
  public:
   using Widget::Widget;
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
 };
 
 class SameLineWidget : public Widget {
  public:
   SameLineWidget(Realm* realm, v8::Local<v8::Object> object, float offset, float spacing);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   void Render() override;
 
@@ -58,12 +72,22 @@ class SameLineWidget : public Widget {
 class NewLineWidget : public Widget {
  public:
   using Widget::Widget;
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
 };
 
 class IndentWidget : public Widget {
  public:
   IndentWidget(Realm* realm, v8::Local<v8::Object> object, float width);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
   bool IsContainer() const override { return true; }
 
@@ -74,6 +98,11 @@ class IndentWidget : public Widget {
 class UnindentWidget : public Widget {
  public:
   UnindentWidget(Realm* realm, v8::Local<v8::Object> object, float width);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
   bool IsContainer() const override { return true; }
 
@@ -84,6 +113,11 @@ class UnindentWidget : public Widget {
 class DummyWidget : public Widget {
  public:
   DummyWidget(Realm* realm, v8::Local<v8::Object> object, float width, float height);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
 
  private:
@@ -93,6 +127,11 @@ class DummyWidget : public Widget {
 class GroupWidget : public Widget {
  public:
   using Widget::Widget;
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
   bool IsContainer() const override { return true; }
 };
@@ -100,6 +139,14 @@ class GroupWidget : public Widget {
 class DisabledWidget : public Widget {
  public:
   DisabledWidget(Realm* realm, v8::Local<v8::Object> object, bool disabled);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetDisabled(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetDisabled(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
   bool IsContainer() const override { return true; }
   bool disabled() const { return disabled_; }

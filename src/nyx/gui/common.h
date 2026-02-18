@@ -20,14 +20,17 @@ class ButtonWidget : public Widget {
  public:
   ButtonWidget(Realm* realm, v8::Local<v8::Object> object, const std::string& label, float width, float height);
 
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetClicked(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
 
-  const std::string& label() const { return label_; }
-  void set_label(const std::string& l) { label_ = l; }
   bool clicked() const { return clicked_; }
 
  private:
-  std::string label_;
   float width_ = 0.0f;
   float height_ = 0.0f;
   bool clicked_ = false;
@@ -38,14 +41,17 @@ class InvisibleButtonWidget : public Widget {
   InvisibleButtonWidget(
       Realm* realm, v8::Local<v8::Object> object, const std::string& label, float width, float height);
 
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetClicked(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
 
-  const std::string& label() const { return label_; }
-  void set_label(const std::string& l) { label_ = l; }
   bool clicked() const { return clicked_; }
 
  private:
-  std::string label_;
   float width_ = 0.0f;
   float height_ = 0.0f;
   bool clicked_ = false;
@@ -55,40 +61,60 @@ class CheckboxWidget : public Widget {
  public:
   CheckboxWidget(Realm* realm, v8::Local<v8::Object> object, const std::string& label, bool checked);
 
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetChecked(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetChecked(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
 
-  const std::string& label() const { return label_; }
-  void set_label(const std::string& l) { label_ = l; }
   bool checked() const { return checked_; }
   void set_checked(bool c) { checked_ = c; }
 
  private:
-  std::string label_;
   bool checked_;
 };
 
 class BulletWidget : public Widget {
  public:
   using Widget::Widget;
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
 };
 
 class SmallButtonWidget : public Widget {
  public:
   SmallButtonWidget(Realm* realm, v8::Local<v8::Object> object, const std::string& label);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetClicked(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
-  const std::string& label() const { return label_; }
-  void set_label(const std::string& l) { label_ = l; }
   bool clicked() const { return clicked_; }
 
  private:
-  std::string label_;
   bool clicked_ = false;
 };
 
 class ArrowButtonWidget : public Widget {
  public:
   ArrowButtonWidget(Realm* realm, v8::Local<v8::Object> object, const std::string& id, ImGuiDir dir);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetClicked(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
   bool clicked() const { return clicked_; }
 
@@ -101,15 +127,21 @@ class ArrowButtonWidget : public Widget {
 class RadioButtonWidget : public Widget {
  public:
   RadioButtonWidget(Realm* realm, v8::Local<v8::Object> object, const std::string& label, bool active);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetActive(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetActive(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetClicked(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
-  const std::string& label() const { return label_; }
-  void set_label(const std::string& l) { label_ = l; }
   bool active() const { return active_; }
   void set_active(bool a) { active_ = a; }
   bool clicked() const { return clicked_; }
 
  private:
-  std::string label_;
   bool active_;
   bool clicked_ = false;
 };
@@ -117,6 +149,16 @@ class RadioButtonWidget : public Widget {
 class ProgressBarWidget : public Widget {
  public:
   ProgressBarWidget(Realm* realm, v8::Local<v8::Object> object, float fraction, const std::string& overlay);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetFraction(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetFraction(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetOverlay(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetOverlay(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
   float fraction() const { return fraction_; }
   void set_fraction(float f) { fraction_ = f; }

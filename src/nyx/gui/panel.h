@@ -49,6 +49,17 @@ class PanelWidget : public Widget {
  public:
   PanelWidget(Realm* realm, v8::Local<v8::Object> object, const std::string& title, ImGuiWindowFlags flags);
 
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetOpen(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetOpen(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetTitle(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetTitle(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetFlags(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetFlags(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
   bool IsContainer() const override { return true; }
 

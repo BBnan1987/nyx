@@ -218,6 +218,37 @@ declare module 'gui' {
     readonly SeparatorTextPadding: number;
   };
 
+  export const ColorEditFlags: {
+    None: number;
+
+    NoAlpha: number;
+    NoPicker: number;
+    NoOptions: number;
+    NoSmallPreview: number;
+    NoInputs: number;
+    NoTooltip: number;
+    NoLabel: number;
+    NoSidePreview: number;
+    NoDragDrop: number;
+    NoBorder: number;
+
+    AlphaBar: number;
+    AlphaPreview: number;
+    AlphaPreviewHalf: number;
+    HDR: number;
+    DisplayRGB: number;
+    DisplayHSV: number;
+    DisplayHex: number;
+    Uint8: number;
+    Float: number;
+    PickerHueBar: number;
+    PickerHueWheel: number;
+    InputRGB: number;
+    InputHSV: number;
+
+    DefaultOptions: number;
+  };
+
   export interface IO {
     // Main display size
     readonly displaySize: { x: number; y: number };
@@ -290,6 +321,20 @@ declare module 'gui' {
   // ImGui IO singleton
   export const io: IO;
 
+  // not a real type just helps with documentation
+  type Color = object & {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+  };
+
+  // not a real type just helps with documentation
+  type Dimension = object & {
+    x: number;
+    y: number;
+  };
+
   // Base Widget interface
   export interface Widget {
     /**
@@ -321,9 +366,30 @@ declare module 'gui' {
      * Widget visibility
      */
     visible: boolean;
+    label: string;
   }
 
   // Widget constructor types
+  export const ColorEdit3: new (label?: string, color?: Color, flags?: number) => Widget & {
+    label: string;
+  };
+
+  export const ColorEdit4: new (label?: string, color?: Color, flags?: number) => Widget & {
+    label: string;
+  };
+
+  export const ColorPicker3: new (label?: string, color?: Color) => Widget & {
+    label: string;
+  };
+
+  export const ColorPicker4: new (label?: string, color?: Color, flags?: number, refColor?: Color) => Widget & {
+    label: string;
+  };
+
+  export const ColorButton: new (label?: string, color?: Color, size?: Dimension) => Widget & {
+    label: string;
+  };
+
   export const Panel: new (title?: string, flags?: number) => Widget & {
     open: boolean;
     title: string;
@@ -467,26 +533,6 @@ declare module 'gui' {
 
   export const InputTextMultiline: new (label?: string, text?: string) => Widget & {
     text: string;
-    label: string;
-  };
-
-  export const ColorEdit3: new (label?: string, r?: number, g?: number, b?: number) => Widget & {
-    label: string;
-  };
-
-  export const ColorEdit4: new (label?: string, r?: number, g?: number, b?: number, a?: number) => Widget & {
-    label: string;
-  };
-
-  export const ColorPicker3: new (label?: string, r?: number, g?: number, b?: number) => Widget & {
-    label: string;
-  };
-
-  export const ColorPicker4: new (label?: string, r?: number, g?: number, b?: number, a?: number, refR?: number, refG?: number, refB?: number, refA?: number) => Widget & {
-    label: string;
-  };
-
-  export const ColorButton: new (label?: string, r?: number, g?: number, b?: number, a?: number, width?: number, height?: number) => Widget & {
     label: string;
   };
 

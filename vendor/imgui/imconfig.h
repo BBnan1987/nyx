@@ -167,6 +167,12 @@ inline float GetArrayElement(v8::Isolate* isolate,
     }                                                                                                                  \
   }                                                                                                                    \
   ImVec2(v8::Local<v8::Value> _x, v8::Local<v8::Value> _y) : x(GetFloatValue(_x)), y(GetFloatValue(_y)) {}             \
+  static ImVec2 FromObject(v8::Isolate* isolate, v8::Local<v8::Value> obj) {                                           \
+    if (obj->IsObject()) {                                                                                             \
+      return FromObject(isolate, obj.As<v8::Object>());                                                                \
+    }                                                                                                                  \
+    return ImVec2(0.0f, 0.0f);                                                                                         \
+  }                                                                                                                    \
   static ImVec2 FromObject(v8::Isolate* isolate, v8::Local<v8::Object> obj) {                                          \
     if (obj->IsArray()) {                                                                                              \
       v8::Local<v8::Array> arr = obj.As<v8::Array>();                                                                  \
@@ -193,6 +199,12 @@ inline float GetArrayElement(v8::Isolate* isolate,
   }                                                                                                                    \
   ImVec4(v8::Local<v8::Value> _x, v8::Local<v8::Value> _y, v8::Local<v8::Value> _z, v8::Local<v8::Value> _w)           \
       : x(GetFloatValue(_x)), y(GetFloatValue(_y)), z(GetFloatValue(_z)), w(GetFloatValue(_w)) {}                      \
+  static ImVec4 FromObject(v8::Isolate* isolate, v8::Local<v8::Value> obj) {                                           \
+    if (obj->IsObject()) {                                                                                             \
+      return FromObject(isolate, obj.As<v8::Object>());                                                                \
+    }                                                                                                                  \
+    return ImVec4(0.0f, 0.0f, 0.0f, 1.0f);                                                                             \
+  }                                                                                                                    \
   static ImVec4 FromObject(v8::Isolate* isolate, v8::Local<v8::Object> obj) {                                          \
     if (obj->IsArray()) {                                                                                              \
       v8::Local<v8::Array> arr = obj.As<v8::Array>();                                                                  \

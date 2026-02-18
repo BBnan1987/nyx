@@ -142,6 +142,9 @@ int Start(NyxImGui* nyx_imgui, GameLock* game_lock) {
       Isolate::CreateParams create_params;
       create_params.array_buffer_allocator = ArrayBuffer::Allocator::NewDefaultAllocator();
       Isolate* isolate = Isolate::New(create_params);
+      // fixme: isolate data is created here but it should really be created by Environment
+      // with the current order CreateProperties does not have access to Environment which it should
+      //  -> pass event_loop to Environment and move IsolateData ownership there
       IsolateData* isolate_data = new IsolateData(isolate, &event_loop);
 
       {

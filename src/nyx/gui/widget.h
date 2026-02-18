@@ -81,12 +81,25 @@
 namespace nyx {
 
 class Environment;
+class IsolateData;
 class WidgetManager;
 
 class Widget : public BaseObject {
  public:
-  Widget(Realm* realm, v8::Local<v8::Object> object);
+  Widget(Realm* realm, v8::Local<v8::Object> object, std::string_view label = "");
   ~Widget() override;
+
+  static void Add(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void Remove(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void On(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void Off(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void Destroy(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void VisibleGetter(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void VisibleSetter(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void LabelGetter(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void LabelSetter(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static v8::Local<v8::FunctionTemplate> GetConstructorTemplate(IsolateData* isolate_data);
 
   virtual void Render() = 0;
   virtual void Update() {
@@ -104,9 +117,11 @@ class Widget : public BaseObject {
 
   bool visible() const { return visible_; }
   void set_visible(bool v) { visible_ = v; }
+  const std::string& label() const { return label_; }
+  void set_label(std::string_view label) { label_ = label; }
 
-  void On(const std::string& event, v8::Local<v8::Function> callback);
-  void Off(const std::string& event, v8::Local<v8::Function> callback);
+  void _On(const std::string& event, v8::Local<v8::Function> callback);
+  void _Off(const std::string& event, v8::Local<v8::Function> callback);
 
  protected:
   void UpdateChildren();
@@ -118,6 +133,7 @@ class Widget : public BaseObject {
   std::vector<Widget*> children_;
   bool visible_ = true;
   std::unordered_map<std::string, std::vector<v8::Global<v8::Function>>> event_handlers_;
+  std::string label_;
 };
 
 class ChildWidget : public Widget {
@@ -129,11 +145,15 @@ class ChildWidget : public Widget {
               float height,
               ImGuiChildFlags child_flags,
               ImGuiWindowFlags window_flags);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
   bool IsContainer() const override { return true; }
 
  private:
-  std::string id_;
   float width_, height_;
   ImGuiChildFlags child_flags_;
   ImGuiWindowFlags window_flags_;

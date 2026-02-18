@@ -30,6 +30,28 @@ namespace nyx {
 class StackWidget : public Widget {
  public:
   using Widget::Widget;
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetID(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetID(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetClipRect(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetClipRect(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetColors(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetColor(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetVars(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetVar(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetTabStop(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetTabStop(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetButtonRepeat(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetButtonRepeat(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetItemWidth(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetItemWidth(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetTextWrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetTextWrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
   bool IsContainer() const override { return true; }
 

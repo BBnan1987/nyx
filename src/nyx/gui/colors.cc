@@ -1,111 +1,146 @@
 #include "nyx/gui/colors.h"
 
+#include "nyx/env.h"
+
 namespace nyx {
 
-ColorEdit3Widget::ColorEdit3Widget(
-    Realm* realm, v8::Local<v8::Object> object, const std::string& label, float r, float g, float b)
-    : Widget(realm, object), label_(label) {
-  col_[0] = r;
-  col_[1] = g;
-  col_[2] = b;
+using v8::Context;
+using v8::FunctionCallbackInfo;
+using v8::FunctionTemplate;
+using v8::Isolate;
+using v8::Local;
+using v8::Object;
+using v8::ObjectTemplate;
+using v8::String;
+using v8::Value;
+
+ColorWidget::ColorWidget(Realm* realm,
+                         Local<Object> object,
+                         const std::string& label,
+                         ColorWidgetType type,
+                         ImGuiColorEditFlags flags,
+                         ImVec4 color,
+                         ImVec4 ref_color,
+                         ImVec2 size)
+    : Widget(realm, object, label), type_(type), flags_(flags), color_(color), ref_color_(ref_color), size_(size) {}
+
+void ColorWidget::Initialize(IsolateData* isolate_data, Local<ObjectTemplate> target) {
+  Isolate* isolate = isolate_data->isolate();
+  Local<FunctionTemplate> tmpl = FunctionTemplate::New(isolate, New);
+  tmpl->InstanceTemplate()->SetInternalFieldCount(BaseObject::kInternalFieldCount);
+  tmpl->Inherit(Widget::GetConstructorTemplate(isolate_data));
+
+  SetProtoProperty(isolate, tmpl, "color", ColorGetter, ColorSetter);
+
+  tmpl->SetClassName(FixedOneByteString(isolate, "ColorWidget"));
+  target->Set(FixedOneByteString(isolate, "ColorWidget"), tmpl);
 }
 
-void ColorEdit3Widget::Render() {
-  float old[3] = {col_[0], col_[1], col_[2]};
-  ImGui::ColorEdit3(label_.c_str(), col_);
-  if (col_[0] != old[0] || col_[1] != old[1] || col_[2] != old[2]) {
-    EmitEvent("change");
+void ColorWidget::New(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Environment* env = Environment::GetCurrent(isolate);
+  Local<Context> context = env->context();
+  CHECK(args[0]->IsString());
+  CHECK(args[1]->IsNumber());
+  CHECK(args[2]->IsNumber());
+  CHECK(args[3]->IsObject() || args[3]->IsArray());
+  CHECK(args[4]->IsObject() || args[4]->IsArray());
+  CHECK(args[5]->IsObject() || args[5]->IsArray());
+  Utf8Value label(isolate, args[0]);
+  ColorWidgetType type = static_cast<ColorWidgetType>(args[1]->NumberValue(context).FromJust());
+  ImGuiColorEditFlags flags = static_cast<ImGuiColorEditFlags>(args[2]->NumberValue(context).FromJust());
+  ImVec4 color = ImVec4::FromObject(isolate, args[3].As<Object>());
+  ImVec4 ref_color = ImVec4::FromObject(isolate, args[4].As<Object>());
+  ImVec2 size = ImVec2::FromObject(isolate, args[5].As<Object>());
+  new ColorWidget(env->principal_realm(), args.This(), *label, type, flags, color, ref_color, size);
+}
+
+void ColorWidget::FlagsGetter(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  ColorWidget* self = BaseObject::Unwrap<ColorWidget>(args.This());
+  if (self) args.GetReturnValue().Set(static_cast<uint32_t>(self->flags_));
+}
+
+void ColorWidget::FlagsSetter(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Environment* env = Environment::GetCurrent(isolate);
+  Local<Context> context = env->context();
+  ColorWidget* self = BaseObject::Unwrap<ColorWidget>(args.This());
+  if (self && args[0]->IsNumber()) {
+    self->flags_ = args[0]->Uint32Value(context).FromMaybe(0);
   }
 }
 
-ColorEdit4Widget::ColorEdit4Widget(
-    Realm* realm, v8::Local<v8::Object> object, const std::string& label, float r, float g, float b, float a)
-    : Widget(realm, object), label_(label) {
-  col_[0] = r;
-  col_[1] = g;
-  col_[2] = b;
-  col_[3] = a;
+void ColorWidget::ColorGetter(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Environment* env = Environment::GetCurrent(isolate);
+  Local<Context> context = env->context();
+  ColorWidget* self = BaseObject::Unwrap<ColorWidget>(args.This());
+  if (self) args.GetReturnValue().Set(self->color_.ToObject(context));
 }
 
-void ColorEdit4Widget::Render() {
-  float old[4] = {col_[0], col_[1], col_[2], col_[3]};
-  ImGui::ColorEdit4(label_.c_str(), col_);
-  if (col_[0] != old[0] || col_[1] != old[1] || col_[2] != old[2] || col_[3] != old[3]) {
-    EmitEvent("change");
+void ColorWidget::ColorSetter(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  ColorWidget* self = BaseObject::Unwrap<ColorWidget>(args.This());
+  if (self) {
+    self->color_ = ImVec4::FromObject(isolate, args[0]);
   }
 }
 
-ColorPicker3Widget::ColorPicker3Widget(
-    Realm* realm, v8::Local<v8::Object> object, const std::string& label, float r, float g, float b)
-    : Widget(realm, object), label_(label) {
-  col_[0] = r;
-  col_[1] = g;
-  col_[2] = b;
+void ColorWidget::RefColorGetter(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Environment* env = Environment::GetCurrent(isolate);
+  Local<Context> context = env->context();
+  ColorWidget* self = BaseObject::Unwrap<ColorWidget>(args.This());
+  if (self) args.GetReturnValue().Set(self->ref_color_.ToObject(context));
 }
 
-void ColorPicker3Widget::Render() {
-  float old[3] = {col_[0], col_[1], col_[2]};
-  ImGui::ColorPicker3(label_.c_str(), col_);
-  if (col_[0] != old[0] || col_[1] != old[1] || col_[2] != old[2]) {
-    EmitEvent("change");
+void ColorWidget::RefColorSetter(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  ColorWidget* self = BaseObject::Unwrap<ColorWidget>(args.This());
+  if (self) {
+    self->ref_color_ = ImVec4::FromObject(isolate, args[0]);
   }
 }
 
-ColorPicker4Widget::ColorPicker4Widget(Realm* realm,
-                                       v8::Local<v8::Object> object,
-                                       const std::string& label,
-                                       float r,
-                                       float g,
-                                       float b,
-                                       float a,
-                                       float ref_r,
-                                       float ref_g,
-                                       float ref_b,
-                                       float ref_a)
-    : Widget(realm, object), label_(label) {
-  col_[0] = r;
-  col_[1] = g;
-  col_[2] = b;
-  col_[3] = a;
-  ref_[0] = ref_r;
-  ref_[1] = ref_g;
-  ref_[2] = ref_b;
-  ref_[3] = ref_a;
+void ColorWidget::SizeGetter(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  Environment* env = Environment::GetCurrent(isolate);
+  Local<Context> context = env->context();
+  ColorWidget* self = BaseObject::Unwrap<ColorWidget>(args.This());
+  if (self) args.GetReturnValue().Set(self->size_.ToObject(context));
 }
 
-void ColorPicker4Widget::Render() {
-  float old[4] = {col_[0], col_[1], col_[2], col_[3]};
-  ImGui::ColorPicker4(label_.c_str(), col_, 0, ref_);
-  if (col_[0] != old[0] || col_[1] != old[1] || col_[2] != old[2] || col_[3] != old[3]) {
-    EmitEvent("change");
+void ColorWidget::SizeSetter(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  ColorWidget* self = BaseObject::Unwrap<ColorWidget>(args.This());
+  if (self) {
+    self->size_ = ImVec2::FromObject(isolate, args[0]);
   }
 }
 
-ColorButtonWidget::ColorButtonWidget(Realm* realm,
-                                     v8::Local<v8::Object> object,
-                                     const std::string& label,
-                                     float r,
-                                     float g,
-                                     float b,
-                                     float a,
-                                     float size_x,
-                                     float size_y)
-    : Widget(realm, object), label_(label) {
-  col_[0] = r;
-  col_[1] = g;
-  col_[2] = b;
-  col_[3] = a;
-  size_[0] = size_x;
-  size_[1] = size_y;
-}
-
-void ColorButtonWidget::Render() {
-  ImVec4 color{col_[0], col_[1], col_[2], col_[3]};
-  ImVec2 size{size_[0], size_[1]};
-  ImGui::ColorButton(label_.c_str(), color, 0, size);
-  clicked_ = ImGui::ColorButton(label_.c_str(), color, 0, size);
-  if (clicked_) {
-    EmitEvent("click");
+void ColorWidget::Render() {
+  bool change = false;
+  switch (type_) {
+    case ColorEdit3:
+      change = ImGui::ColorEdit3(label_.c_str(), &color_.x,flags_);
+      break;
+    case ColorEdit4:
+      change = ImGui::ColorEdit4(label_.c_str(), &color_.x, flags_);
+      break;
+    case ColorPicker3:
+      change = ImGui::ColorPicker3(label_.c_str(), &color_.x, flags_);
+      break;
+    case ColorPicker4:
+      change = ImGui::ColorPicker4(label_.c_str(), &color_.x, flags_, &ref_color_.x);
+      break;
+    case ColorButton:
+      if (ImGui::ColorButton(label_.c_str(), color_, flags_, size_)) {
+        EmitEvent("click");
+      }
+      break;
+  }
+  if (change) {
+    EmitEvent("change");
   }
 }
 

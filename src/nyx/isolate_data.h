@@ -25,11 +25,20 @@ namespace nyx {
   V(source_url_string, "sourceURL")                                                                                    \
   V(specifier_string, "specifier")                                                                                     \
   V(synthetic_string, "synthetic")                                                                                     \
-  V(url_string, "url")
+  V(url_string, "url")                                                                                                 \
+  V(x_string, "x")                                                                                                     \
+  V(y_string, "y")                                                                                                     \
+  V(z_string, "z")                                                                                                     \
+  V(w_string, "w")                                                                                                     \
+  V(r_string, "r")                                                                                                     \
+  V(g_string, "g")                                                                                                     \
+  V(b_string, "b")                                                                                                     \
+  V(a_string, "a")
 
 #define PER_ISOLATE_TEMPLATE_PROPERTIES(V)                                                                             \
   V(binding_data_default_template, v8::ObjectTemplate)                                                                 \
-  V(module_wrap_constructor_template, v8::FunctionTemplate)
+  V(module_wrap_constructor_template, v8::FunctionTemplate)                                                            \
+  V(widget_constructor_template, v8::FunctionTemplate)
 
 #define PER_REALM_STRONG_PERSISTENT_VALUES(V)                                                                          \
   V(builtin_module_require, v8::Function)                                                                              \

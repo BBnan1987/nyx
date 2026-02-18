@@ -10,6 +10,8 @@ namespace nyx {
 #define NYX_STRINGIFY_(x) #x
 #define NYX_STRINGIFY(x) NYX_STRINGIFY_(x)
 
+#define NYX_NOINLINE __declspec(noinline)
+
 struct AssertionInfo {
   const char* file_line;  // filename:line
   const char* what;
@@ -322,9 +324,15 @@ static inline void SetProtoProperty(v8::Isolate* isolate,
                                     v8::Local<v8::FunctionTemplate> target,
                                     const char* name,
                                     v8::FunctionCallback getter,
-                                    v8::FunctionCallback setter) {
-  v8::Local<v8::FunctionTemplate> t_getter = v8::FunctionTemplate::New(isolate, getter);
-  v8::Local<v8::FunctionTemplate> t_setter = v8::FunctionTemplate::New(isolate, setter);
+                                    v8::FunctionCallback setter = nullptr) {
+  v8::Local<v8::FunctionTemplate> t_getter;
+  v8::Local<v8::FunctionTemplate> t_setter;
+  if (getter) {
+    t_getter = v8::FunctionTemplate::New(isolate, getter);
+  }
+  if (setter) {
+    t_setter = v8::FunctionTemplate::New(isolate, setter);
+  }
   target->PrototypeTemplate()->SetAccessorProperty(OneByteString(isolate, name), t_getter, t_setter);
 }
 

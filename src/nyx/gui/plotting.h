@@ -20,14 +20,19 @@ class PlotLinesWidget : public Widget {
                   float scale_max,
                   float width,
                   float height);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void SetValues(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
-  const std::string& label() const { return label_; }
   const std::vector<float>& values() const { return values_; }
   void set_values(std::vector<float> v) { values_ = std::move(v); }
   void set_overlay(const std::string& o) { overlay_ = o; }
 
  private:
-  std::string label_;
   std::vector<float> values_;
   std::string overlay_;
   float scale_min_, scale_max_;
@@ -45,14 +50,19 @@ class PlotHistogramWidget : public Widget {
                       float scale_max,
                       float width,
                       float height);
+
+  static void Initialize(IsolateData* isolate_data, v8::Local<v8::ObjectTemplate> target);
+
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void SetValues(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   void Render() override;
-  const std::string& label() const { return label_; }
   const std::vector<float>& values() const { return values_; }
   void set_values(std::vector<float> v) { values_ = std::move(v); }
   void set_overlay(const std::string& o) { overlay_ = o; }
 
  private:
-  std::string label_;
   std::vector<float> values_;
   std::string overlay_;
   float scale_min_, scale_max_;
