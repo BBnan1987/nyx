@@ -225,6 +225,9 @@ static void SetTimeoutCallback(const FunctionCallbackInfo<Value>& args) {
   if (args.Length() > 1 && args[1]->IsNumber()) {
     delay = static_cast<uint64_t>(args[1]->NumberValue(context).FromMaybe(0));
   }
+  if (delay < 1) {
+    delay = 1;
+  }
 
   uint64_t id = GetTimerRegistry().SetTimeout(env, callback, delay);
   args.GetReturnValue().Set(Number::New(isolate, static_cast<double>(id)));
@@ -241,9 +244,12 @@ static void SetIntervalCallback(const FunctionCallbackInfo<Value>& args) {
   }
 
   Local<Function> callback = args[0].As<Function>();
-  uint64_t interval = 0;
+  uint64_t interval = 1;
   if (args.Length() > 1 && args[1]->IsNumber()) {
     interval = static_cast<uint64_t>(args[1]->NumberValue(context).FromMaybe(0));
+  }
+  if (interval < 1) {
+    interval = 1;
   }
 
   uint64_t id = GetTimerRegistry().SetInterval(env, callback, interval);
