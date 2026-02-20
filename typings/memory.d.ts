@@ -126,6 +126,7 @@ declare module 'memory' {
   export function readMemory(address: bigint | number, size: number): Uint8Array;
   export function readMemoryFast(address: bigint | number, size: number): Uint8Array;
   export function readMemoryInto(address: bigint | number, buffer: Uint8Array): void;
+  export function readMemoryIntoIfChanged(address: bigint | number, buffer: Uint8Array): boolean;
   export function writeMemory(address: bigint | number, data: Uint8Array): void;
 
   // Test memory allocation functions

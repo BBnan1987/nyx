@@ -8,6 +8,7 @@ declare function internalBinding(module: 'memory'): {
   readMemory(address: bigint, size: number): Uint8Array;
   readMemoryFast(address: bigint, size: number): Uint8Array;
   readMemoryInto(address: bigint, buffer: Uint8Array): void;
+  readMemoryIntoIfChanged(address: bigint, buffer: Uint8Array): boolean;
   writeMemory(address: bigint, data: Uint8Array): void;
   allocateTestMemory(size: number): bigint;
   freeTestMemory(address: bigint): void;

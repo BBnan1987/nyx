@@ -6,6 +6,7 @@
 #include "nyx/util.h"
 
 #include <Windows.h>
+#include <nmmintrin.h>
 
 #include <algorithm>
 #include <chrono>
@@ -15,6 +16,23 @@
 #include <vector>
 
 namespace nyx {
+
+struct MemCacheKey {
+  uint64_t address;
+  uint32_t size;
+  bool operator==(const MemCacheKey& o) const {
+    return address == o.address && size == o.size;
+  }
+};
+struct MemCacheKeyHash {
+  size_t operator()(const MemCacheKey& k) const {
+    size_t h = std::hash<uint64_t>()(k.address);
+    h ^= std::hash<uint32_t>()(k.size) + 0x9e3779b9u + (h << 6) + (h >> 2);
+    return h;
+  }
+};
+static std::unordered_map<MemCacheKey, uint32_t, MemCacheKeyHash> checksum_cache_;
+static thread_local std::vector<uint8_t> read_buf_;
 
 using v8::Array;
 using v8::BigInt;
@@ -30,6 +48,20 @@ using v8::ObjectTemplate;
 using v8::String;
 using v8::Uint8Array;
 using v8::Value;
+
+static uint32_t Crc32Hash(const uint8_t* data, size_t size) {
+  uint64_t crc = 0xFFFFFFFFull;
+  size_t i = 0;
+  for (; i + 8 <= size; i += 8) {
+    uint64_t chunk;
+    std::memcpy(&chunk, data + i, 8);
+    crc = _mm_crc32_u64(crc, chunk);
+  }
+  for (; i < size; i++) {
+    crc = _mm_crc32_u8(static_cast<uint32_t>(crc), data[i]);
+  }
+  return static_cast<uint32_t>(crc ^ 0xFFFFFFFFull);
+}
 
 static bool SafeMemcpy(void* dest, const void* src, size_t size) {
   __try {
@@ -77,6 +109,85 @@ static void ReadMemoryFast(const FunctionCallbackInfo<Value>& args) {
 
   Local<v8::ArrayBuffer> ab = v8::ArrayBuffer::New(isolate, std::move(backing_store));
   args.GetReturnValue().Set(Uint8Array::New(ab, 0, size));
+}
+
+// readMemoryIfChanged(address: BigInt, size: Uint32) -> Uint8Array | undefined
+static void ReadMemoryIfChanged(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  uint64_t address = args[0].As<BigInt>()->Uint64Value();
+  size_t size = static_cast<size_t>(args[1].As<v8::Uint32>()->Value());
+
+  if (size > 8) {
+    if (read_buf_.size() < size) read_buf_.resize(size);
+    if (!SafeMemcpy(read_buf_.data(), reinterpret_cast<void*>(address), size)) {
+      isolate->ThrowError("Access violation reading memory");
+      return;
+    }
+
+    uint32_t checksum = Crc32Hash(read_buf_.data(), size);
+    MemCacheKey key{address, static_cast<uint32_t>(size)};
+    auto [it, inserted] = checksum_cache_.emplace(key, checksum);
+    if (!inserted) {
+      if (it->second == checksum) {
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      it->second = checksum;
+    }
+
+    auto backing_store = v8::ArrayBuffer::NewBackingStore(isolate, size);
+    std::memcpy(backing_store->Data(), read_buf_.data(), size);
+    Local<v8::ArrayBuffer> ab = v8::ArrayBuffer::New(isolate, std::move(backing_store));
+    args.GetReturnValue().Set(Uint8Array::New(ab, 0, size));
+  } else {
+    auto backing_store = v8::ArrayBuffer::NewBackingStore(isolate, size);
+    if (!SafeMemcpy(backing_store->Data(), reinterpret_cast<void*>(address), size)) {
+      isolate->ThrowError("Access violation reading memory");
+      return;
+    }
+    Local<v8::ArrayBuffer> ab = v8::ArrayBuffer::New(isolate, std::move(backing_store));
+    args.GetReturnValue().Set(Uint8Array::New(ab, 0, size));
+  }
+}
+
+// readMemoryIntoIfChanged(address: BigInt, buffer: Uint8Array) -> bool
+static void ReadMemoryIntoIfChanged(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  uint64_t address = args[0].As<BigInt>()->Uint64Value();
+  Local<Uint8Array> dst_arr = args[1].As<Uint8Array>();
+  size_t size = dst_arr->ByteLength();
+  void* dest = static_cast<uint8_t*>(dst_arr->Buffer()->Data()) + dst_arr->ByteOffset();
+
+  if (size > 8) {
+    if (read_buf_.size() < size) read_buf_.resize(size);
+    if (!SafeMemcpy(read_buf_.data(), reinterpret_cast<void*>(address), size)) {
+      isolate->ThrowError("Access violation reading memory");
+      return;
+    }
+    std::memcpy(dest, read_buf_.data(), size);
+
+    uint32_t checksum = Crc32Hash(read_buf_.data(), size);
+    MemCacheKey key{address, static_cast<uint32_t>(size)};
+    auto [it, inserted] = checksum_cache_.emplace(key, checksum);
+    if (!inserted) {
+      if (it->second == checksum) {
+        args.GetReturnValue().Set(v8::False(isolate));
+        return;
+      }
+      it->second = checksum;
+    }
+  } else {
+    if (!SafeMemcpy(dest, reinterpret_cast<void*>(address), size)) {
+      isolate->ThrowError("Access violation reading memory");
+      return;
+    }
+  }
+  args.GetReturnValue().Set(v8::True(isolate));
+}
+
+// clearChecksumCache() -> void
+static void ClearChecksumCache(const FunctionCallbackInfo<Value>& args) {
+  checksum_cache_.clear();
 }
 
 // readMemoryInto(address: BigInt, buffer: Uint8Array) -> void
@@ -206,8 +317,11 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
 
   SetMethod(isolate, target, "readMemory", ReadMemory);
   SetMethod(isolate, target, "readMemoryFast", ReadMemoryFast);
+  SetMethod(isolate, target, "readMemoryIfChanged", ReadMemoryIfChanged);
+  SetMethod(isolate, target, "readMemoryIntoIfChanged", ReadMemoryIntoIfChanged);
   SetMethod(isolate, target, "readMemoryInto", ReadMemoryInto);
   SetMethod(isolate, target, "writeMemory", WriteMemory);
+  SetMethod(isolate, target, "clearChecksumCache", ClearChecksumCache);
 
   SetMethod(isolate, target, "allocateTestMemory", AllocateTestMemory);
   SetMethod(isolate, target, "freeTestMemory", FreeTestMemory);
