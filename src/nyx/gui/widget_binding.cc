@@ -70,10 +70,7 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
   V(RadioButtonWidget)                                                                                                 \
   V(ProgressBarWidget)                                                                                                 \
   V(InputTextWidget)                                                                                                   \
-  V(InputFloatWidget)                                                                                                  \
-  V(InputIntWidget)                                                                                                    \
-  V(InputTextMultilineWidget)                                                                                          \
-  V(InputTextWithHintWidget)                                                                                           \
+  V(InputNumberWidget)                                                                                                 \
   V(SeparatorWidget)                                                                                                   \
   V(SpacingWidget)                                                                                                     \
   V(SameLineWidget)                                                                                                    \

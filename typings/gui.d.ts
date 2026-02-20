@@ -390,6 +390,32 @@ declare module 'gui' {
     label: string;
   };
 
+  export const InputText: new (label?: string, maxLength?: number, text?: string, flags?: number) => Widget & {
+    text: string;
+    label: string;
+  };
+
+  export const InputTextMultiline: new (label?: string, maxLength?: number, text?: string, flags?: number) => Widget & {
+    text: string;
+    label: string;
+  };
+
+  export const InputTextWithHint: new (label?: string, maxLength?: number, text?: string, hint?: string, flags?: number) => Widget & {
+    text: string;
+    hint: string;
+    label: string;
+  };
+
+  export const InputFloat: new (label?: string, value?: number, step?: number, stepFast?: number, format?: string, flags?: number) => Widget & {
+    value: number;
+    label: string;
+  };
+
+  export const InputInt: new (label?: string, value?: number, step?: number, stepFast?: number, format?: string, flags?: number) => Widget & {
+    value: number;
+    label: string;
+  };
+
   export const Panel: new (title?: string, flags?: number) => Widget & {
     open: boolean;
     title: string;
@@ -436,17 +462,6 @@ declare module 'gui' {
   };
 
   export const Slider: typeof SliderFloat;
-
-  export const InputText: new (label?: string, text?: string) => Widget & {
-    text: string;
-    label: string;
-  };
-
-  export const InputTextWithHint: new (label?: string, text?: string) => Widget & {
-    text: string;
-    hint: string;
-    label: string;
-  };
 
   export const Separator: new () => Widget;
   export const Spacing: new () => Widget;
@@ -518,21 +533,6 @@ declare module 'gui' {
 
   export const DragInt: new (label?: string, value?: number, speed?: number, min?: number, max?: number) => Widget & {
     value: number;
-    label: string;
-  };
-
-  export const InputFloat: new (label?: string, value?: number) => Widget & {
-    value: number;
-    label: string;
-  };
-
-  export const InputInt: new (label?: string, value?: number) => Widget & {
-    value: number;
-    label: string;
-  };
-
-  export const InputTextMultiline: new (label?: string, text?: string) => Widget & {
-    text: string;
     label: string;
   };
 
