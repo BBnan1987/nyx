@@ -3,6 +3,7 @@
 #include "nyx/gui/widget_manager.h"
 #include "nyx/module_wrap.h"
 #include "nyx/nyx_imgui.h"
+#include "nyx/timers.h"
 
 namespace nyx {
 
@@ -25,6 +26,9 @@ Environment::Environment(IsolateData* isolate_data,
       scripts_root_(script_path) {
   Isolate::Scope isolate_scope(isolate_);
 
+  // Must exist before bootstrapping so timer binding callbacks can access it.
+  timer_registry_ = std::make_unique<TimerRegistry>(this);
+
   if (nyx_imgui_) {
     draw_context_ = std::make_unique<ImGuiDrawContext>(nyx_imgui_);
     widget_manager_ = std::make_unique<WidgetManager>();
@@ -35,6 +39,7 @@ Environment::Environment(IsolateData* isolate_data,
 }
 
 Environment::~Environment() {
+  timer_registry_->CloseAll();
   principal_realm_.reset();
   widget_manager_.reset();
   draw_context_.reset();

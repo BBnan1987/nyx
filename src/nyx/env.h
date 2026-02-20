@@ -14,6 +14,7 @@ namespace nyx {
 class GameLock;
 class ModuleWrap;
 class NyxImGui;
+class TimerRegistry;
 class WidgetManager;
 
 enum ContextEmbedderIndex {
@@ -55,6 +56,7 @@ class Environment {
   ImGuiDrawContext* draw_context() const { return draw_context_.get(); }
   GameLock* game_lock() const { return game_lock_; }
   WidgetManager* widget_manager() const { return widget_manager_.get(); }
+  TimerRegistry& timer_registry() { return *timer_registry_; }
 
   void RegisterModule(int identity_hash, ModuleWrap* wrap);
   void UnregisterModule(int identity_hash);
@@ -92,6 +94,7 @@ class Environment {
   NyxImGui* nyx_imgui_;
   GameLock* game_lock_;
   BuiltinLoader builtin_loader_;
+  std::unique_ptr<TimerRegistry> timer_registry_;
   std::unique_ptr<PrincipalRealm> principal_realm_;
   std::unique_ptr<ImGuiDrawContext> draw_context_;
   std::unique_ptr<WidgetManager> widget_manager_;
