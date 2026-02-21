@@ -73,11 +73,15 @@ void ImGuiDrawContext::EndFrame() {
     if (fg_lists.Size > 0) {
       nyx_imgui_->foreground()->Submit(
           fg_lists.Data, fg_lists.Size, draw_data->DisplayPos, draw_data->DisplaySize, draw_data->FramebufferScale);
+    } else {
+      nyx_imgui_->foreground()->Clear();
     }
 
     if (bg_found && bg_found->CmdBuffer.Size > 0) {
       nyx_imgui_->background()->Submit(
           &bg_found, 1, draw_data->DisplayPos, draw_data->DisplaySize, draw_data->FramebufferScale);
+    } else {
+      nyx_imgui_->background()->Clear();
     }
   } else {
     nyx_imgui_->ClearDrawData();
