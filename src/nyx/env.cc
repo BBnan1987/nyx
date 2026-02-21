@@ -40,9 +40,9 @@ Environment::Environment(IsolateData* isolate_data,
 
 Environment::~Environment() {
   timer_registry_->CloseAll();
-  principal_realm_.reset();
   widget_manager_.reset();
   draw_context_.reset();
+  principal_realm_.reset();
 }
 
 Environment* Environment::GetCurrent(v8::Isolate* isolate) {
