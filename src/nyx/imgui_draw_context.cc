@@ -42,7 +42,7 @@ void ImGuiDrawContext::BeginFrame() {
 
   ImGui::NewFrame();
 
-  nyx_imgui_->SetWantCapture(io.WantCaptureMouse, io.WantCaptureKeyboard);
+  nyx_imgui_->SetWantCapture(io.WantCaptureMouse, io.WantCaptureKeyboard && io.WantTextInput);
 
   frame_active_ = true;
 }
