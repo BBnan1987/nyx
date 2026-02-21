@@ -1,4 +1,5 @@
 #include "nyx/env.h"
+#include "nyx/gui/canvas.h"
 #include "nyx/gui/colors.h"
 #include "nyx/gui/combo.h"
 #include "nyx/gui/common.h"
@@ -56,7 +57,7 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
   Isolate* isolate = isolate_data->isolate();
   HandleScope scope(isolate);
 
-  // target->Set(FixedOneByteString(isolate, "Widget"), Widget::GetConstructorTemplate(isolate_data));
+  Canvas::Initialize(isolate_data);
 
 #define INIT_WIDGET_CONSTRUCTORS(V)                                                                                    \
   V(ChildWidget)                                                                                                       \
@@ -131,7 +132,9 @@ static void CreatePerIsolateProperties(IsolateData* isolate_data, Local<ObjectTe
   });
 }
 
-static void CreatePerContextProperties(Local<Object> target, Local<Context> context) {}
+static void CreatePerContextProperties(Local<Object> target, Local<Context> context) {
+  Canvas::CreatePerContextProperties(target, context);
+}
 
 NYX_BINDING_PER_ISOLATE_INIT(gui, CreatePerIsolateProperties)
 NYX_BINDING_CONTEXT_AWARE(gui, CreatePerContextProperties)

@@ -38,7 +38,8 @@ namespace nyx {
 #define PER_ISOLATE_TEMPLATE_PROPERTIES(V)                                                                             \
   V(binding_data_default_template, v8::ObjectTemplate)                                                                 \
   V(module_wrap_constructor_template, v8::FunctionTemplate)                                                            \
-  V(widget_constructor_template, v8::FunctionTemplate)
+  V(widget_constructor_template, v8::FunctionTemplate)                                                                 \
+  V(canvas_constructor_template, v8::FunctionTemplate)
 
 #define PER_REALM_STRONG_PERSISTENT_VALUES(V)                                                                          \
   V(builtin_module_require, v8::Function)                                                                              \

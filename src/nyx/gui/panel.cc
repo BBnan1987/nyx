@@ -2,9 +2,10 @@
 
 #include "nyx/env.h"
 #include "nyx/gui/widget_manager.h"
+#include "nyx/isolate_data.h"
 
 namespace nyx {
-  
+
 using v8::Context;
 using v8::FunctionCallbackInfo;
 using v8::FunctionTemplate;
@@ -18,6 +19,10 @@ using v8::Value;
 PanelWidget::PanelWidget(Realm* realm, Local<Object> object, const std::string& title, ImGuiWindowFlags flags)
     : Widget(realm, object), title_(title), flags_(flags) {}
 
+PanelWidget::~PanelWidget() {
+  if (canvas_) canvas_->MakeWeak();
+}
+
 void PanelWidget::Initialize(IsolateData* isolate_data, Local<ObjectTemplate> target) {
   Isolate* isolate = isolate_data->isolate();
   Local<FunctionTemplate> tmpl = FunctionTemplate::New(isolate, New);
@@ -27,6 +32,7 @@ void PanelWidget::Initialize(IsolateData* isolate_data, Local<ObjectTemplate> ta
   SetProtoProperty(isolate, tmpl, "open", GetOpen, SetOpen);
   SetProtoProperty(isolate, tmpl, "title", GetTitle, SetTitle);
   SetProtoProperty(isolate, tmpl, "flags", GetFlags, SetFlags);
+  SetProtoProperty(isolate, tmpl, "canvas", GetCanvas, nullptr);
 
   tmpl->SetClassName(FixedOneByteString(isolate, "Panel"));
   target->Set(FixedOneByteString(isolate, "Panel"), tmpl);
@@ -86,6 +92,22 @@ void PanelWidget::SetFlags(const FunctionCallbackInfo<Value>& args) {
   }
 }
 
+void PanelWidget::GetCanvas(const FunctionCallbackInfo<Value>& args) {
+  PanelWidget* self = BaseObject::Unwrap<PanelWidget>(args.This());
+  if (!self) return;
+
+  if (!self->canvas_) {
+    Environment* env = self->env();
+    Local<Context> ctx = env->context();
+    Local<ObjectTemplate> inst =
+        env->isolate_data()->canvas_constructor_template()->InstanceTemplate();
+    Local<Object> obj = inst->NewInstance(ctx).ToLocalChecked();
+    self->canvas_ = new Canvas(env->principal_realm(), obj);
+  }
+
+  args.GetReturnValue().Set(self->canvas_->object());
+}
+
 void PanelWidget::Render() {
   if (!open_) return;
 
@@ -93,6 +115,12 @@ void PanelWidget::Render() {
   panel_visible_ = ImGui::Begin(title_.c_str(), &open_, flags_);
   if (panel_visible_) {
     RenderChildren();
+    if (canvas_) {
+      ImVec2 wpos = ImGui::GetWindowPos();
+      ImVec2 cmin = ImGui::GetWindowContentRegionMin();
+      ImVec2 offset(wpos.x + cmin.x, wpos.y + cmin.y);
+      canvas_->Render(ImGui::GetWindowDrawList(), offset);
+    }
   }
   ImGui::End();
 

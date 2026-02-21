@@ -321,6 +321,21 @@ declare module 'gui' {
   // ImGui IO singleton
   export const io: IO;
 
+  export interface Canvas {
+    addLine(key: string, p1: ImVec2, p2: ImVec2, color: number, thickness?: number): undefined;
+    addRect(key: string, min: ImVec2, max: ImVec2, color: number, rounding?: number, flags?: number, thickness?: number): undefined;
+    addRectFilled(key: string, min: ImVec2, max: ImVec2, color: number, rounding?: number, flags?: number): undefined;
+    addCircle(key: string, center: ImVec2, radius: number, color: number, segments?: number, thickness?: number): undefined;
+    addCircleFilled(key: string, center: ImVec2, radius: number, color: number, segments?: number): undefined;
+    addText(key: string, pos: ImVec2, color: number, text: string): undefined;
+
+    remove(key: string): undefined;
+    clear(): undefined;
+  }
+
+  export const background: Canvas;
+  export const foreground: Canvas;
+
   // not a real type just helps with documentation
   type Color = object & {
     r: number;
@@ -420,6 +435,7 @@ declare module 'gui' {
     open: boolean;
     title: string;
     flags: number;
+    readonly canvas: Canvas;
   };
 
   export const Text: new (text?: string) => Widget & {
