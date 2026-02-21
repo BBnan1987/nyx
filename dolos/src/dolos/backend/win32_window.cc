@@ -499,11 +499,11 @@ void Win32Window::PushInputEventsForMessage(UINT Msg, WPARAM wParam, LPARAM lPar
           nyx_imgui_->PushInputEvent(ev);
         }
 
-        if (key == ImGuiKey_Home) {
+        if (key == ImGuiKey_Home && !is_key_down) {
           nyx::Restart();
         }
 
-        if (key == ImGuiKey_End) {
+        if (key == ImGuiKey_End && !is_key_down) {
           nyx::Shutdown();
         }
 
