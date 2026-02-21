@@ -7,6 +7,7 @@ add_subdirectory(vendor)
 add_subdirectory(dolos)
 
 set(NYX_SOURCES
+  src/nyx/gui/canvas.cc
   src/nyx/gui/colors.cc
   src/nyx/gui/combo.cc
   src/nyx/gui/common.cc
