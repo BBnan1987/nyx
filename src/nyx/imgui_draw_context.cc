@@ -12,6 +12,7 @@ ImGuiDrawContext::ImGuiDrawContext(NyxImGui* nyx_imgui) : nyx_imgui_(nyx_imgui) 
   io.IniFilename = nullptr;
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+  io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;
   ImGui::StyleColorsDark();
   ImGui::GetStyle().FrameBorderSize = 0.0f;
 }
