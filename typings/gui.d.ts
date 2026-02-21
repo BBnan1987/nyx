@@ -1,4 +1,55 @@
 declare module 'gui' {
+  export const Key: {
+    readonly Tab: number;
+    readonly LeftArrow: number; readonly RightArrow: number; readonly UpArrow: number; readonly DownArrow: number;
+    readonly PageUp: number; readonly PageDown: number;
+    readonly Home: number; readonly End: number;
+    readonly Insert: number; readonly Delete: number;
+    readonly Backspace: number; readonly Space: number; readonly Enter: number; readonly Escape: number;
+    readonly LeftCtrl: number; readonly LeftShift: number; readonly LeftAlt: number; readonly LeftSuper: number;
+    readonly RightCtrl: number; readonly RightShift: number; readonly RightAlt: number; readonly RightSuper: number;
+    readonly Menu: number;
+    readonly Num0: number; readonly Num1: number; readonly Num2: number; readonly Num3: number; readonly Num4: number;
+    readonly Num5: number; readonly Num6: number; readonly Num7: number; readonly Num8: number; readonly Num9: number;
+    readonly A: number; readonly B: number; readonly C: number; readonly D: number; readonly E: number;
+    readonly F: number; readonly G: number; readonly H: number; readonly I: number; readonly J: number;
+    readonly K: number; readonly L: number; readonly M: number; readonly N: number; readonly O: number;
+    readonly P: number; readonly Q: number; readonly R: number; readonly S: number; readonly T: number;
+    readonly U: number; readonly V: number; readonly W: number; readonly X: number; readonly Y: number; readonly Z: number;
+    readonly F1: number; readonly F2: number; readonly F3: number; readonly F4: number;
+    readonly F5: number; readonly F6: number; readonly F7: number; readonly F8: number;
+    readonly F9: number; readonly F10: number; readonly F11: number; readonly F12: number;
+    readonly F13: number; readonly F14: number; readonly F15: number; readonly F16: number;
+    readonly F17: number; readonly F18: number; readonly F19: number; readonly F20: number;
+    readonly F21: number; readonly F22: number; readonly F23: number; readonly F24: number;
+    readonly Apostrophe: number; readonly Comma: number; readonly Minus: number; readonly Period: number; readonly Slash: number;
+    readonly Semicolon: number; readonly Equal: number; readonly LeftBracket: number; readonly Backslash: number;
+    readonly RightBracket: number; readonly GraveAccent: number;
+    readonly CapsLock: number; readonly ScrollLock: number; readonly NumLock: number; readonly PrintScreen: number; readonly Pause: number;
+    readonly Keypad0: number; readonly Keypad1: number; readonly Keypad2: number; readonly Keypad3: number; readonly Keypad4: number;
+    readonly Keypad5: number; readonly Keypad6: number; readonly Keypad7: number; readonly Keypad8: number; readonly Keypad9: number;
+    readonly KeypadDecimal: number; readonly KeypadDivide: number; readonly KeypadMultiply: number;
+    readonly KeypadSubtract: number; readonly KeypadAdd: number; readonly KeypadEnter: number; readonly KeypadEqual: number;
+    readonly AppBack: number; readonly AppForward: number;
+    readonly GamepadStart: number; readonly GamepadBack: number;
+    readonly GamepadFaceLeft: number; readonly GamepadFaceRight: number; readonly GamepadFaceUp: number; readonly GamepadFaceDown: number;
+    readonly GamepadDpadLeft: number; readonly GamepadDpadRight: number; readonly GamepadDpadUp: number; readonly GamepadDpadDown: number;
+    readonly GamepadL1: number; readonly GamepadR1: number; readonly GamepadL2: number; readonly GamepadR2: number;
+    readonly GamepadL3: number; readonly GamepadR3: number;
+    readonly GamepadLStickLeft: number; readonly GamepadLStickRight: number; readonly GamepadLStickUp: number; readonly GamepadLStickDown: number;
+    readonly GamepadRStickLeft: number; readonly GamepadRStickRight: number; readonly GamepadRStickUp: number; readonly GamepadRStickDown: number;
+    readonly ModNone: 0; readonly ModCtrl: number; readonly ModShift: number; readonly ModAlt: number;
+    readonly ModSuper: number; readonly ModShortcut: number;
+  };
+
+  export const MouseButton: {
+    readonly Left: 0;
+    readonly Right: 1;
+    readonly Middle: 2;
+    readonly X1: 3;
+    readonly X2: 4;
+  };
+
   export const ConfigFlags: {
     readonly None: number;
     readonly NavEnableKeyboard: number;
@@ -303,7 +354,6 @@ declare module 'gui' {
     configFlags: number;
     backendFlags: number;
 
-    backendFlags: boolean;
     mouseDrawCursor: boolean;
     configInputTextCursorBlink: boolean;
     configInputTextEnterKeepActive: boolean;
@@ -316,6 +366,15 @@ declare module 'gui' {
     configDebugBeginReturnValueLoop: boolean;
     configDebugIgnoreFocusLoss: boolean;
     configDebugIniSettings: boolean;
+
+    isKeyDown(key: number): boolean;
+    isKeyPressed(key: number, repeat?: boolean): boolean;
+    isKeyReleased(key: number): boolean;
+
+    isMouseDown(btn: number): boolean;
+    isMouseClicked(btn: number, repeat?: boolean): boolean;
+    isMouseReleased(btn: number): boolean;
+    isMouseDoubleClicked(btn: number): boolean;
   }
 
   // ImGui IO singleton

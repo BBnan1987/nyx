@@ -361,6 +361,71 @@ void CreatePerIsolatePropertiesIO(IsolateData* isolate_data, Local<ObjectTemplat
         ImGui::GetIO().ConfigDebugIniSettings = args[0]->BooleanValue(isolate);
       });
 
+  SetMethod(isolate, tmpl, "isKeyDown", [](const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+    Environment* env = Environment::GetCurrent(isolate);
+    Local<Context> context = env->context();
+    if (args.Length() < 1) { args.GetReturnValue().Set(false); return; }
+    int key = args[0]->Int32Value(context).FromMaybe(0);
+    args.GetReturnValue().Set(ImGui::IsKeyDown(static_cast<ImGuiKey>(key)));
+  });
+
+  SetMethod(isolate, tmpl, "isKeyPressed", [](const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+    Environment* env = Environment::GetCurrent(isolate);
+    Local<Context> context = env->context();
+    if (args.Length() < 1) { args.GetReturnValue().Set(false); return; }
+    int key = args[0]->Int32Value(context).FromMaybe(0);
+    bool repeat = args.Length() < 2 ? true : args[1]->BooleanValue(isolate);
+    args.GetReturnValue().Set(ImGui::IsKeyPressed(static_cast<ImGuiKey>(key), repeat));
+  });
+
+  SetMethod(isolate, tmpl, "isKeyReleased", [](const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+    Environment* env = Environment::GetCurrent(isolate);
+    Local<Context> context = env->context();
+    if (args.Length() < 1) { args.GetReturnValue().Set(false); return; }
+    int key = args[0]->Int32Value(context).FromMaybe(0);
+    args.GetReturnValue().Set(ImGui::IsKeyReleased(static_cast<ImGuiKey>(key)));
+  });
+
+  SetMethod(isolate, tmpl, "isMouseDown", [](const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+    Environment* env = Environment::GetCurrent(isolate);
+    Local<Context> context = env->context();
+    if (args.Length() < 1) { args.GetReturnValue().Set(false); return; }
+    int btn = args[0]->Int32Value(context).FromMaybe(0);
+    args.GetReturnValue().Set(ImGui::IsMouseDown(static_cast<ImGuiMouseButton>(btn)));
+  });
+
+  SetMethod(isolate, tmpl, "isMouseClicked", [](const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+    Environment* env = Environment::GetCurrent(isolate);
+    Local<Context> context = env->context();
+    if (args.Length() < 1) { args.GetReturnValue().Set(false); return; }
+    int btn = args[0]->Int32Value(context).FromMaybe(0);
+    bool repeat = args.Length() < 2 ? false : args[1]->BooleanValue(isolate);
+    args.GetReturnValue().Set(ImGui::IsMouseClicked(static_cast<ImGuiMouseButton>(btn), repeat));
+  });
+
+  SetMethod(isolate, tmpl, "isMouseReleased", [](const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+    Environment* env = Environment::GetCurrent(isolate);
+    Local<Context> context = env->context();
+    if (args.Length() < 1) { args.GetReturnValue().Set(false); return; }
+    int btn = args[0]->Int32Value(context).FromMaybe(0);
+    args.GetReturnValue().Set(ImGui::IsMouseReleased(static_cast<ImGuiMouseButton>(btn)));
+  });
+
+  SetMethod(isolate, tmpl, "isMouseDoubleClicked", [](const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = args.GetIsolate();
+    Environment* env = Environment::GetCurrent(isolate);
+    Local<Context> context = env->context();
+    if (args.Length() < 1) { args.GetReturnValue().Set(false); return; }
+    int btn = args[0]->Int32Value(context).FromMaybe(0);
+    args.GetReturnValue().Set(ImGui::IsMouseDoubleClicked(static_cast<ImGuiMouseButton>(btn)));
+  });
+
   target->Set(isolate, "io", tmpl);
 }
 
