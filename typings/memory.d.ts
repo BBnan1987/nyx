@@ -30,6 +30,7 @@ declare module 'memory' {
     length?: number;
     encoding?: StringEncoding;
     count?: number;
+    lazy?: boolean;
   }
 
   // Cursor interface - represents a view into memory
