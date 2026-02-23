@@ -14,9 +14,13 @@ declare module 'memory' {
     readonly Pointer: 'pointer';
     readonly Bool: 'bool';
     readonly Padding: 'padding';
+    readonly String: 'string';
   };
 
   type DataType = typeof DataTypes[keyof typeof DataTypes];
+
+  /** Encoding for 'string' type fields */
+  type StringEncoding = 'utf8' | 'wide' | 'ansi';
 
   // Field definition for MemoryModel
   export interface FieldDefinition {
@@ -24,6 +28,8 @@ declare module 'memory' {
     type?: DataType;
     model?: MemoryModel;
     length?: number;
+    encoding?: StringEncoding;
+    count?: number;
   }
 
   // Cursor interface - represents a view into memory
